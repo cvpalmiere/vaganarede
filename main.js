@@ -1,25 +1,27 @@
-// Adiciona classe de animação suave quando os elementos entram na tela
 document.addEventListener('DOMContentLoaded', () => {
+    // Configuração do Intersection Observer para disparar o Fade-in e as animações em cascata
     const observerOptions = {
         root: null,
         rootMargin: '0px',
-        threshold: 0.15
+        threshold: 0.1 // O elemento aparece assim que 10% dele estiver na tela
     };
 
     const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
+                // Para de observar depois que já apareceu (anima apenas na primeira vez)
+                observer.unobserve(entry.target); 
             }
         });
     }, observerOptions);
 
+    // Seleciona todos os elementos com a classe .fade-in e começa a observar
     document.querySelectorAll('.fade-in').forEach((element) => {
         observer.observe(element);
     });
 
-    // Smooth scroll para links da navbar
+    // Smooth scroll para os links da Navbar (Produto, Soluções, etc)
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
