@@ -1,0 +1,10 @@
+﻿{
+  "name": "Vagas na Rede",
+  "short_name": "Vagas na Rede",
+  "description": "Matching inteligente entre candidatos e vagas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FFE500",
+  "icons": []
+}

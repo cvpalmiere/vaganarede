@@ -1,0 +1,340 @@
+// gerado para PostgreSQL via Supabase
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------- ENUMS ----------
+
+enum TipoUsuario {
+  CANDIDATO
+  EMPRESA
+  EMPRESA_RH
+  ADMIN
+}
+
+enum NivelVaga {
+  ESTAGIO
+  TRAINEE
+  JUNIOR
+  PLENO
+  SENIOR
+}
+
+enum ModeloTrabalho {
+  REMOTO
+  HIBRIDO
+  PRESENCIAL
+}
+
+enum AreaVaga {
+  TI
+  SAUDE
+  ADMINISTRATIVO
+  COMERCIAL
+  MARKETING
+  FINANCEIRO
+  RH
+  ENGENHARIA
+  OUTROS
+}
+
+enum FaixaSalarial {
+  ATE_2000
+  DE_2000_A_4000
+  DE_4000_A_6000
+  DE_6000_A_10000
+  ACIMA_DE_10000
+  A_COMBINAR
+}
+
+enum StatusVaga {
+  ATIVA
+  PAUSADA
+  ENCERRADA
+}
+
+enum StatusDocumento {
+  PENDENTE
+  VERIFICADO
+  REJEITADO
+}
+
+enum StatusCandidatura {
+  ENVIADA
+  EM_ANALISE
+  ENTREVISTA
+  OFERTA
+  REJEITADA
+}
+
+enum PlanoTipo {
+  EMPRESA
+  EMPRESA_RH
+}
+
+enum StatusPagamento {
+  ATIVO
+  PENDENTE
+  CANCELADO
+  INADIMPLENTE
+}
+
+enum CanalNotificacao {
+  PUSH
+  WHATSAPP
+  EMAIL
+}
+
+// ---------- USUARIO BASE ----------
+
+// espelha o auth.users do Supabase - id deve ser o mesmo uuid gerado no Supabase Auth
+model Usuario {
+  id         String      @id @db.Uuid
+  email      String      @unique
+  tipo       TipoUsuario
+  criadoEm   DateTime    @default(now())
+
+  candidato  Candidato?
+  empresa    Empresa?
+  empresaRh  EmpresaRh?
+
+  @@map("usuarios")
+}
+
+// ---------- CANDIDATO ----------
+
+model Candidato {
+  id                String    @id @default(uuid()) @db.Uuid
+  usuarioId         String    @unique @db.Uuid
+  usuario           Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  nomeCompleto      String
+  // cpf nunca fica em texto puro - hash pra unicidade, criptografado pra uso legal
+  cpfHash           String    @unique
+  cpfCriptografado  String
+  telefone          String
+  cidade            String
+  latitude          Float
+  longitude         Float
+
+  linkedinUrl       String?
+  githubUrl         String?
+  resumoProfissional String?
+  completudePerfil  Int       @default(0)
+
+  documentos        DocumentoCandidato[]
+  skills            CandidatoSkill[]
+  candidaturas      Candidatura[]
+  matches           MatchCompatibilidade[]
+  notificacoes      Notificacao[]
+
+  criadoEm          DateTime  @default(now())
+  atualizadoEm      DateTime  @updatedAt
+
+  @@map("candidatos")
+}
+
+model DocumentoCandidato {
+  id            String          @id @default(uuid()) @db.Uuid
+  candidatoId   String          @db.Uuid
+  candidato     Candidato       @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+
+  tipo          String
+  // caminho no Supabase Storage, nunca a URL publica direta de dado sensivel
+  storagePath   String
+  status        StatusDocumento @default(PENDENTE)
+  verificadoEm  DateTime?
+
+  criadoEm      DateTime        @default(now())
+
+  @@map("documentos_candidato")
+}
+
+// ---------- SKILLS (compartilhadas entre candidato e vaga) ----------
+
+model Skill {
+  id        String            @id @default(uuid()) @db.Uuid
+  nome      String            @unique
+
+  candidatos CandidatoSkill[]
+  vagas      VagaSkill[]
+
+  @@map("skills")
+}
+
+model CandidatoSkill {
+  candidatoId String    @db.Uuid
+  candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  skillId     String    @db.Uuid
+  skill       Skill     @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  // 1 a 5 - usado no calculo de score
+  nivel       Int       @default(3)
+
+  @@id([candidatoId, skillId])
+  @@map("candidato_skills")
+}
+
+// ---------- EMPRESA ----------
+
+model Empresa {
+  id                String           @id @default(uuid()) @db.Uuid
+  usuarioId         String           @unique @db.Uuid
+  usuario           Usuario          @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  razaoSocial       String
+  cnpjHash          String           @unique
+  cnpjCriptografado String
+  cnpjVerificado    Boolean          @default(false)
+  telefone          String
+  cidade            String
+
+  // preenchido quando a empresa e gerenciada por uma Empresa de RH
+  empresaRhId       String?          @db.Uuid
+  empresaRh         EmpresaRh?       @relation(fields: [empresaRhId], references: [id])
+
+  assinatura        Assinatura?
+  vagas             Vaga[]
+
+  criadoEm          DateTime         @default(now())
+
+  @@map("empresas")
+}
+
+// ---------- EMPRESA DE RH ----------
+
+model EmpresaRh {
+  id                String    @id @default(uuid()) @db.Uuid
+  usuarioId         String    @unique @db.Uuid
+  usuario           Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  razaoSocial       String
+  cnpjHash          String    @unique
+  cnpjCriptografado String
+
+  empresasCliente   Empresa[]
+  assinatura        Assinatura?
+
+  criadoEm          DateTime  @default(now())
+
+  @@map("empresas_rh")
+}
+
+// ---------- ASSINATURA (paywall) ----------
+
+model Assinatura {
+  id               String          @id @default(uuid()) @db.Uuid
+
+  empresaId        String?         @unique @db.Uuid
+  empresa          Empresa?        @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  empresaRhId      String?         @unique @db.Uuid
+  empresaRh        EmpresaRh?      @relation(fields: [empresaRhId], references: [id], onDelete: Cascade)
+
+  plano            PlanoTipo
+  status           StatusPagamento @default(PENDENTE)
+  gatewayClienteId String?
+  gatewayAssinaturaId String?
+  inicioEm         DateTime?
+  fimEm            DateTime?
+
+  criadoEm         DateTime        @default(now())
+  atualizadoEm     DateTime        @updatedAt
+
+  @@map("assinaturas")
+}
+
+// ---------- VAGA ----------
+
+model Vaga {
+  id            String         @id @default(uuid()) @db.Uuid
+  empresaId     String         @db.Uuid
+  empresa       Empresa        @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  titulo        String
+  descricao     String
+  area          AreaVaga
+  nivel         NivelVaga
+  modelo        ModeloTrabalho
+  faixaSalarial FaixaSalarial
+  cidade        String
+  latitude      Float
+  longitude     Float
+  status        StatusVaga     @default(ATIVA)
+
+  skills        VagaSkill[]
+  candidaturas  Candidatura[]
+  matches       MatchCompatibilidade[]
+
+  criadoEm      DateTime       @default(now())
+  atualizadoEm  DateTime       @updatedAt
+
+  @@map("vagas")
+}
+
+model VagaSkill {
+  vagaId  String @db.Uuid
+  vaga    Vaga   @relation(fields: [vagaId], references: [id], onDelete: Cascade)
+  skillId String @db.Uuid
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  // peso da skill no calculo de score, 1 a 5
+  peso    Int    @default(3)
+
+  @@id([vagaId, skillId])
+  @@map("vaga_skills")
+}
+
+// ---------- MATCH E CANDIDATURA ----------
+
+// score calculado pelo motor de compatibilidade, gerado mesmo sem candidatura - dispara notificacao
+model MatchCompatibilidade {
+  id           String    @id @default(uuid()) @db.Uuid
+  candidatoId  String    @db.Uuid
+  candidato    Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  vagaId       String    @db.Uuid
+  vaga         Vaga      @relation(fields: [vagaId], references: [id], onDelete: Cascade)
+
+  score        Int
+  distanciaKm  Float?
+  calculadoEm  DateTime  @default(now())
+
+  @@unique([candidatoId, vagaId])
+  @@map("matches_compatibilidade")
+}
+
+model Candidatura {
+  id                  String            @id @default(uuid()) @db.Uuid
+  candidatoId         String            @db.Uuid
+  candidato           Candidato         @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  vagaId              String            @db.Uuid
+  vaga                Vaga              @relation(fields: [vagaId], references: [id], onDelete: Cascade)
+
+  scoreCompatibilidade Int
+  status              StatusCandidatura @default(ENVIADA)
+
+  criadaEm            DateTime          @default(now())
+  atualizadaEm        DateTime          @updatedAt
+
+  @@unique([candidatoId, vagaId])
+  @@map("candidaturas")
+}
+
+// ---------- NOTIFICACAO ----------
+
+model Notificacao {
+  id          String           @id @default(uuid()) @db.Uuid
+  candidatoId String           @db.Uuid
+  candidato   Candidato        @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+
+  canal       CanalNotificacao
+  titulo      String
+  mensagem    String
+  lida        Boolean          @default(false)
+  enviadaEm   DateTime         @default(now())
+
+  @@map("notificacoes")
+}
