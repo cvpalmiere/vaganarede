@@ -1,12 +1,11 @@
-import { createServerClient } from '@supabase/ssr';
-import { NextResponse, type NextRequest } from 'next/server';
+﻿import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
-// rotas protegidas por prefixo - cada tipo de usuario so acessa a propria area
 const ROTA_POR_TIPO: Record<string, string> = {
-  '/candidato': 'CANDIDATO',
-  '/empresa': 'EMPRESA',
-  '/rh': 'EMPRESA_RH',
-  '/admin': 'ADMIN',
+  "/candidato": "CANDIDATO",
+  "/empresa": "EMPRESA",
+  "/rh": "EMPRESA_RH",
+  "/admin": "ADMIN",
 };
 
 export async function middleware(request: NextRequest) {
@@ -18,7 +17,7 @@ export async function middleware(request: NextRequest) {
     {
       cookies: {
         getAll: () => request.cookies.getAll(),
-        setAll: (cookiesToSet) => {
+        setAll: (cookiesToSet: { name: string; value: string; options: CookieOptions }[]) => {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
@@ -32,8 +31,7 @@ export async function middleware(request: NextRequest) {
   const prefixoProtegido = Object.keys(ROTA_POR_TIPO).find((p) => path.startsWith(p));
 
   if (prefixoProtegido && !user) {
-    // sem sessao, nao entra em nenhuma area logada
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (prefixoProtegido && user) {
@@ -41,8 +39,7 @@ export async function middleware(request: NextRequest) {
     const tipoReal = user.app_metadata?.tipo_usuario;
 
     if (tipoReal !== tipoEsperado) {
-      // usuario logado mas tentando acessar area de outro perfil
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
@@ -50,5 +47,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/candidato/:path*', '/empresa/:path*', '/rh/:path*', '/admin/:path*'],
+  matcher: ["/candidato/:path*", "/empresa/:path*", "/rh/:path*", "/admin/:path*"],
 };
