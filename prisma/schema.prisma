@@ -95,14 +95,14 @@ enum CanalNotificacao {
 
 // espelha o auth.users do Supabase - id deve ser o mesmo uuid gerado no Supabase Auth
 model Usuario {
-  id         String      @id @db.Uuid
-  email      String      @unique
-  tipo       TipoUsuario
-  criadoEm   DateTime    @default(now())
+  id        String      @id @db.Uuid
+  email     String      @unique
+  tipo      TipoUsuario
+  criadoEm  DateTime    @default(now())
 
-  candidato  Candidato?
-  empresa    Empresa?
-  empresaRh  EmpresaRh?
+  candidato Candidato?
+  empresa   Empresa?
+  empresaRh EmpresaRh?
 
   @@map("usuarios")
 }
@@ -110,32 +110,34 @@ model Usuario {
 // ---------- CANDIDATO ----------
 
 model Candidato {
-  id                String    @id @default(uuid()) @db.Uuid
-  usuarioId         String    @unique @db.Uuid
-  usuario           Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  id                 String               @id @default(uuid()) @db.Uuid
+  usuarioId          String               @unique @db.Uuid
+  usuario            Usuario              @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
-  nomeCompleto      String
+  nomeCompleto       String
   // cpf nunca fica em texto puro - hash pra unicidade, criptografado pra uso legal
-  cpfHash           String    @unique
-  cpfCriptografado  String
-  telefone          String
-  cidade            String
-  latitude          Float
-  longitude         Float
+  cpfHash            String               @unique
+  cpfCriptografado   String
+  escolaridade       String?
+  curso              String?
+  telefone           String
+  cidade             String
+  latitude           Float
+  longitude          Float
 
-  linkedinUrl       String?
-  githubUrl         String?
+  linkedinUrl        String?
+  githubUrl          String?
   resumoProfissional String?
-  completudePerfil  Int       @default(0)
+  completudePerfil   Int                  @default(0)
 
-  documentos        DocumentoCandidato[]
-  skills            CandidatoSkill[]
-  candidaturas      Candidatura[]
-  matches           MatchCompatibilidade[]
-  notificacoes      Notificacao[]
+  documentos         DocumentoCandidato[]
+  skills             CandidatoSkill[]
+  candidaturas       Candidatura[]
+  matches            MatchCompatibilidade[]
+  notificacoes       Notificacao[]
 
-  criadoEm          DateTime  @default(now())
-  atualizadoEm      DateTime  @updatedAt
+  criadoEm           DateTime             @default(now())
+  atualizadoEm       DateTime             @updatedAt
 
   @@map("candidatos")
 }
@@ -159,8 +161,8 @@ model DocumentoCandidato {
 // ---------- SKILLS (compartilhadas entre candidato e vaga) ----------
 
 model Skill {
-  id        String            @id @default(uuid()) @db.Uuid
-  nome      String            @unique
+  id         String          @id @default(uuid()) @db.Uuid
+  nome       String          @unique
 
   candidatos CandidatoSkill[]
   vagas      VagaSkill[]
@@ -228,22 +230,22 @@ model EmpresaRh {
 // ---------- ASSINATURA (paywall) ----------
 
 model Assinatura {
-  id               String          @id @default(uuid()) @db.Uuid
+  id                  String          @id @default(uuid()) @db.Uuid
 
-  empresaId        String?         @unique @db.Uuid
-  empresa          Empresa?        @relation(fields: [empresaId], references: [id], onDelete: Cascade)
-  empresaRhId      String?         @unique @db.Uuid
-  empresaRh        EmpresaRh?      @relation(fields: [empresaRhId], references: [id], onDelete: Cascade)
+  empresaId           String?         @unique @db.Uuid
+  empresa             Empresa?        @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  empresaRhId         String?         @unique @db.Uuid
+  empresaRh           EmpresaRh?      @relation(fields: [empresaRhId], references: [id], onDelete: Cascade)
 
-  plano            PlanoTipo
-  status           StatusPagamento @default(PENDENTE)
-  gatewayClienteId String?
+  plano               PlanoTipo
+  status              StatusPagamento @default(PENDENTE)
+  gatewayClienteId    String?
   gatewayAssinaturaId String?
-  inicioEm         DateTime?
-  fimEm            DateTime?
+  inicioEm            DateTime?
+  fimEm               DateTime?
 
-  criadoEm         DateTime        @default(now())
-  atualizadoEm     DateTime        @updatedAt
+  criadoEm            DateTime        @default(now())
+  atualizadoEm        DateTime        @updatedAt
 
   @@map("assinaturas")
 }
@@ -290,7 +292,6 @@ model VagaSkill {
 
 // ---------- MATCH E CANDIDATURA ----------
 
-// score calculado pelo motor de compatibilidade, gerado mesmo sem candidatura - dispara notificacao
 model MatchCompatibilidade {
   id           String    @id @default(uuid()) @db.Uuid
   candidatoId  String    @db.Uuid
@@ -307,17 +308,17 @@ model MatchCompatibilidade {
 }
 
 model Candidatura {
-  id                  String            @id @default(uuid()) @db.Uuid
-  candidatoId         String            @db.Uuid
-  candidato           Candidato         @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
-  vagaId              String            @db.Uuid
-  vaga                Vaga              @relation(fields: [vagaId], references: [id], onDelete: Cascade)
+  id                   String            @id @default(uuid()) @db.Uuid
+  candidatoId          String            @db.Uuid
+  candidato            Candidato         @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  vagaId               String            @db.Uuid
+  vaga                 Vaga              @relation(fields: [vagaId], references: [id], onDelete: Cascade)
 
   scoreCompatibilidade Int
-  status              StatusCandidatura @default(ENVIADA)
+  status               StatusCandidatura @default(ENVIADA)
 
-  criadaEm            DateTime          @default(now())
-  atualizadaEm        DateTime          @updatedAt
+  criadaEm             DateTime          @default(now())
+  atualizadaEm         DateTime          @updatedAt
 
   @@unique([candidatoId, vagaId])
   @@map("candidaturas")
