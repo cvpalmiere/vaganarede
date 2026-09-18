@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { db } from '@/lib/db'; // Certifique-se que o seu client do prisma está aqui
+import { prisma } from '@/lib/prisma';
 
 const schema = z.object({
   email: z.string().email(),
@@ -18,8 +18,6 @@ export async function POST(request: Request) {
     }
 
     const cookieStore = await cookies();
-
-    // Criamos a resposta base antecipadamente para injetar os cookies do SSR do Supabase nela
     let response = NextResponse.json({ ok: true });
 
     const supabase = createServerClient(
@@ -47,14 +45,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ erro: 'E-mail ou senha inválidos' }, { status: 401 });
     }
 
-    // Busca o tipo diretamente na tabela 'usuarios' do Prisma para garantir precisão
-    const usuarioBanco = await db.usuario.findUnique({
+    const usuarioBanco = await prisma.usuario.findUnique({
       where: { id: data.user.id },
     });
 
     const tipo = usuarioBanco?.tipo || data.user.app_metadata?.tipo_usuario || 'CANDIDATO';
 
-    // Retorna a resposta final preservando os cookies de sessão do Supabase nos headers
     return NextResponse.json(
       { ok: true, tipo }, 
       { status: 200, headers: response.headers }
