@@ -15,6 +15,8 @@ const baseSchema = z.object({
 const candidatoSchema = baseSchema.extend({
   tipo: z.literal("CANDIDATO"),
   cpf: z.string().min(11),
+  escolaridade: z.string().min(2),
+  curso: z.string().min(2),
 });
 
 const empresaSchema = baseSchema.extend({
@@ -68,6 +70,8 @@ export async function POST(request: Request) {
             nomeCompleto: dados.nome,
             cpfHash: hashDocumento(dados.cpf),
             cpfCriptografado: encryptDocumento(dados.cpf),
+            escolaridade: dados.escolaridade,
+            curso: dados.curso,
             telefone: "",
             cidade: "",
             latitude: 0,
