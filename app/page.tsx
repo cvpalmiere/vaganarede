@@ -28,7 +28,7 @@ export default function LandingPage() {
               Entrar
             </Link>
             <Link href="/cadastro" className="rounded-pill bg-electric-yellow px-3 py-2 text-sm font-bold text-deep-black transition hover:-translate-y-0.5 sm:px-4">
-              Assinar agora
+              Começar agora
             </Link>
           </div>
         </nav>
@@ -162,7 +162,7 @@ export default function LandingPage() {
             </div>
             <div className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm sm:grid-cols-3">
               <Link href="/login" className="text-zinc-300 hover:text-yellow-200">Entrar</Link>
-              <Link href="/cadastro" className="text-yellow-200 hover:text-white">Assinar agora</Link>
+              <Link href="/cadastro" className="text-yellow-200 hover:text-white">Começar agora</Link>
             </div>
           </div>
         </div>
