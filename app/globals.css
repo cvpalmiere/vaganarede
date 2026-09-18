@@ -54,3 +54,75 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.2);
 }
+
+/* --- classes do visual novo da landing (Dia 8) --- */
+
+.grid-noise {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.nav-glass {
+  background: rgba(0, 0, 0, 0.83);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.soft-card {
+  border: 1px solid rgba(10, 10, 10, 0.11);
+  box-shadow: 9px 9px 22px rgba(21, 21, 21, 0.08), -6px -6px 18px rgba(255, 255, 255, 0.72);
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+.soft-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 229, 0, 0.86);
+}
+
+.dark-card {
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 10px 12px 28px rgba(0, 0, 0, 0.25);
+  transition: transform 0.28s ease, border-color 0.28s ease, background 0.28s ease;
+}
+.dark-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 229, 0, 0.75);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.yellow-dot {
+  box-shadow: 0 0 0 6px rgba(255, 229, 0, 0.12), 0 0 24px rgba(255, 229, 0, 0.55);
+}
+
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.metric-line {
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-electric-yellow) 0 58%, rgba(255, 255, 255, 0.15) 58% 100%);
+}
+
+.accordion-mark {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid rgba(255, 229, 0, 0.65);
+  border-radius: 999px;
+  color: var(--color-electric-yellow);
+  font-size: 1.35rem;
+  line-height: 1;
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+.accordion-card.is-open .accordion-mark {
+  transform: rotate(45deg);
+  background: var(--color-electric-yellow);
+  color: var(--color-deep-black);
+}
