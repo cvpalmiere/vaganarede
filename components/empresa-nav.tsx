@@ -2,17 +2,16 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Briefcase, UserCircle, Sparkles, FileText, LogOut, Search } from "lucide-react";
+import { Briefcase, LayoutDashboard, ClipboardList, Users, Settings, LogOut } from "lucide-react";
 
 const ITENS = [
-  { href: "/candidato", label: "Painel", icon: UserCircle },
-  { href: "/candidato/perfil", label: "Perfil", icon: UserCircle },
-  { href: "/candidato/skills", label: "Habilidades", icon: Sparkles },
-  { href: "/candidato/vagas", label: "Vagas", icon: Search },
-  { href: "/candidato/documentos", label: "Documentos", icon: FileText },
+  { href: "/empresa", label: "Painel", icon: LayoutDashboard },
+  { href: "/empresa/vagas", label: "Vagas", icon: ClipboardList },
+  { href: "/empresa/candidatos", label: "Candidatos", icon: Users },
+  { href: "/empresa/configuracoes", label: "Configurações", icon: Settings },
 ];
 
-export function CandidatoNav() {
+export function EmpresaNav() {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -24,12 +23,12 @@ export function CandidatoNav() {
 
   return (
     <nav className="bg-deep-black text-white">
-      <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-electric-yellow rounded-lg flex items-center justify-center">
             <Briefcase className="w-4 h-4 text-deep-black" />
           </div>
-          <span className="font-bold text-sm">Vagas na Rede</span>
+          <span className="font-bold text-sm">Painel da Empresa</span>
         </div>
         <div className="flex items-center gap-1">
           {ITENS.map((item) => {

@@ -182,7 +182,7 @@ export default function LandingPage() {
                 Seus dados protegidos em cada etapa
               </h2>
             </div>
-            <div className="rounded-[1.7rem] border border-white/15 bg-white/[.055] p-7 backdrop-blur-sm sm:p-9">
+            <div className="rounded-[1.7rem] border border-white/15 bg-white/5.5 p-7 backdrop-blur-sm sm:p-9">
               <p className="text-lg leading-8 text-zinc-200">
                 Documentos sensíveis, como CPF e CNPJ, são criptografados com AES-256-GCM. A arquitetura da Vagas na Rede
                 foi pensada para proteger dados de candidatos e empresas enquanto as conexões acontecem.
@@ -276,7 +276,7 @@ export default function LandingPage() {
 
         <section className="bg-electric-yellow py-20 lg:py-24">
           <div className="mx-auto flex max-w-5xl flex-col items-center px-5 text-center">
-            <h2 className="mt-6 max-w-3xl text-3xl font-bold leading-tight tracking-[-.05em] text-deep-black sm:text-5xl">
+            <h2 className="mt-6 max-w-3xl text-3xl font-bold leading-tight tracking-tighter text-deep-black sm:text-5xl">
               O próximo talento pode estar mais perto do que você imagina.
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-deep-black/70">

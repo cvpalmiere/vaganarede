@@ -16,7 +16,7 @@ export function HeroPreview() {
 
   return (
     <div className="relative mx-auto w-full max-w-xl">
-      <div className="relative rounded-[2rem] border border-white/15 bg-white/[.045] p-4 shadow-2xl backdrop-blur-md sm:p-5">
+      <div className="relative rounded-4xl border border-white/15 bg-white/4.5 p-4 shadow-2xl backdrop-blur-md sm:p-5">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <span className="yellow-dot h-2.5 w-2.5 rounded-full bg-electric-yellow" />
