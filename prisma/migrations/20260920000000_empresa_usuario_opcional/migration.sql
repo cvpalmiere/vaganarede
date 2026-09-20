@@ -1,0 +1,3 @@
+﻿ALTER TABLE "candidatos" ADD COLUMN IF NOT EXISTS "curso" TEXT;
+ALTER TABLE "candidatos" ADD COLUMN IF NOT EXISTS "escolaridade" TEXT;
+ALTER TABLE "empresas" ALTER COLUMN "usuarioId" DROP NOT NULL;

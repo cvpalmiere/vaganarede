@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
+import { Logo } from "@/components/logo";
 
 const ROTA_POR_TIPO: Record<string, string> = {
   CANDIDATO: "/candidato",
@@ -41,7 +42,7 @@ export default function LoginPage() {
       router.push(ROTA_POR_TIPO[dados.tipo] ?? "/");
       router.refresh();
     } catch (err) {
-      setErro("Erro de conexão ao tentar entrar.");
+      setErro("Erro de conexao ao tentar entrar.");
       setCarregando(false);
     }
   }
@@ -49,6 +50,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-deep-black text-white flex items-center justify-center px-6">
       <div className="glass-dark p-8 md:p-10 rounded-card border border-gray-800 w-full max-w-md bg-[#18181b]">
+        <div className="mb-6">
+          <Logo variante="branco" altura={20} />
+        </div>
         <h1 className="text-2xl font-bold mb-2">Entrar</h1>
         <p className="text-gray-400 text-sm mb-8">Acesse sua conta no Vagas na Rede.</p>
 

@@ -14,9 +14,7 @@ export default function LandingPage() {
     <div className="w-full overflow-hidden">
       <header className="fixed top-0 z-50 w-full nav-glass">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
-          <Link href="/" className="text-lg font-bold tracking-tight text-white">
-            Vagas na Rede
-          </Link>
+          <Link href="/"><img src="/logo-branco.png" alt="Vagas na Rede" style={{ height: 20, width: "auto" }} /></Link>
           <div className="hidden items-center gap-6 text-sm md:flex">
             <Link href="#recursos" className="text-zinc-300 transition hover:text-yellow-300">Recursos</Link>
             <Link href="#empresas" className="text-zinc-300 transition hover:text-yellow-300">Para empresas</Link>
@@ -291,7 +289,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-5 py-12 lg:px-8">
           <div className="flex flex-col justify-between gap-10 border-b border-white/15 pb-10 md:flex-row">
             <div>
-              <p className="text-xl font-bold tracking-tight">Vagas na Rede</p>
+              <img src="/logo-branco.png" alt="Vagas na Rede" style={{ height: 24, width: "auto" }} />
               <p className="mt-3 max-w-sm text-sm leading-6 text-zinc-400">
                 Uma plataforma para gerir talentos, oportunidades e processos com mais confiança.
               </p>
@@ -315,3 +313,4 @@ export default function LandingPage() {
     </div>
   );
 }
+

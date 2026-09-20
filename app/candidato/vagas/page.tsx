@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { MapPin, Building2 } from "lucide-react";
 
 const AREAS = ["TI", "SAUDE", "ADMINISTRATIVO", "COMERCIAL", "MARKETING", "FINANCEIRO", "RH", "ENGENHARIA", "OUTROS"];
@@ -93,7 +94,7 @@ export default function BuscaVagas() {
       ) : (
         <div className="space-y-3">
           {vagas.map((v) => (
-            <div key={v.id} className="glass rounded-card p-5 border border-white">
+            <Link key={v.id} href={"/candidato/vagas/" + v.id} className="block glass rounded-card p-5 border border-white hover:border-electric-yellow transition">
               <p className="font-semibold text-deep-black">{v.titulo}</p>
               <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
                 <span className="flex items-center gap-1"><Building2 className="w-3.5 h-3.5" />{v.empresa.razaoSocial}</span>
@@ -101,7 +102,7 @@ export default function BuscaVagas() {
                 <span>{v.modelo}</span>
                 <span>{v.nivel}</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
