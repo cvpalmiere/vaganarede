@@ -6,13 +6,19 @@ import { UserCircle, Building2, Network, ArrowRight } from "lucide-react";
 
 type TipoUsuario = "CANDIDATO" | "EMPRESA" | "EMPRESA_RH";
 
+const ROTA_APOS_CADASTRO: Record<TipoUsuario, string> = {
+  CANDIDATO: "/candidato",
+  EMPRESA: "/empresa/assinatura",
+  EMPRESA_RH: "/rh/assinatura",
+};
+
 export function CadastroForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [etapa, setEtapa] = useState<1 | 2>(searchParams.get("tipo") ? 2 : 1);
   const [tipo, setTipo] = useState<TipoUsuario>((searchParams.get("tipo") as TipoUsuario) || "CANDIDATO");
-  
+
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -37,13 +43,21 @@ export function CadastroForm() {
         throw new Error(errData.erro || "Erro ao criar conta");
       }
 
-      if (tipo === "CANDIDATO") {
-        router.push("/candidato");
-      } else {
-        router.push("/empresa/assinatura");
+  // login automatico logo apos o cadastro - sem isso nao existe sessao e o layout te manda de volta pro /login
+      const resLogin = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: dados.email, senha: dados.senha }),
+      });
+
+      if (!resLogin.ok) {
+        router.push("/login");
+        return;
       }
-    } catch (error: any) {
-      setErro(error.message);
+
+      router.push(ROTA_APOS_CADASTRO[tipo]);
+    } catch (error) {
+      setErro(error instanceof Error ? error.message : "Erro ao criar conta");
       setLoading(false);
     }
   }
@@ -53,7 +67,7 @@ export function CadastroForm() {
       <div className="w-full max-w-md mx-auto mt-6">
         <h1 className="text-3xl font-bold text-center text-white mb-2">Como você deseja usar a rede?</h1>
         <p className="text-center text-zinc-400 mb-8">Selecione seu perfil para iniciar o cadastro.</p>
-        
+
         <div className="space-y-4">
           <button onClick={() => { setTipo("CANDIDATO"); setEtapa(2); }} className="w-full flex items-center justify-between p-5 border border-white/10 rounded-2xl hover:border-yellow-400 transition bg-[#18181b] shadow-sm text-left group">
             <div className="flex items-center gap-4">
@@ -88,7 +102,7 @@ export function CadastroForm() {
       <button onClick={() => setEtapa(1)} className="text-sm text-zinc-400 hover:text-yellow-300 mb-6 flex items-center gap-1 transition">
         ← Voltar e mudar perfil
       </button>
-      
+
       <h2 className="text-2xl font-bold mb-6 text-white">
         {tipo === "CANDIDATO" ? "Cadastro de Estudante" : "Cadastro Corporativo"}
       </h2>
@@ -100,12 +114,12 @@ export function CadastroForm() {
           <label className="block text-sm font-medium mb-1 text-zinc-300">Nome {tipo === "CANDIDATO" ? "Completo" : "da Empresa"}</label>
           <input name="nome" type="text" required className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
         </div>
-        
+
         <div>
           <label className="block text-sm font-medium mb-1 text-zinc-300">E-mail</label>
           <input name="email" type="email" required className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
         </div>
-        
+
         <div>
           <label className="block text-sm font-medium mb-1 text-zinc-300">Senha</label>
           <input name="senha" type="password" required minLength={8} className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />

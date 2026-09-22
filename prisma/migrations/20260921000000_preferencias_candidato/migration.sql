@@ -1,0 +1,1 @@
+﻿-- aplicado manualmente via SQL Editor

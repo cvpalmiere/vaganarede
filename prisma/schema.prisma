@@ -136,6 +136,10 @@ model Candidato {
   matches            MatchCompatibilidade[]
   notificacoes       Notificacao[]
 
+  pretensaoSalarial  FaixaSalarial?
+  modeloPreferido    ModeloTrabalho?
+  nivelExperiencia   NivelVaga?
+
   criadoEm           DateTime             @default(now())
   atualizadoEm       DateTime             @updatedAt
 
