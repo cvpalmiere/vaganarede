@@ -12,7 +12,7 @@
 # Error details
 
 ```
-Error: Command failed: npx tsx scripts/ativar-assinatura-teste.ts rh-1790033327068-9783@teste-e2e.local
+Error: Command failed: npx tsx scripts/ativar-assinatura-teste.ts rh-1790245404782-5569@teste-e2e.local
 ```
 
 # Test source
@@ -33,7 +33,7 @@ Error: Command failed: npx tsx scripts/ativar-assinatura-teste.ts rh-17900333270
   13 | 
   14 |   test("apos ativar assinatura, cria empresa-cliente e vaga", async ({ page }) => {
 > 15 |     execSync(`npx tsx scripts/ativar-assinatura-teste.ts ${email}`, { stdio: "inherit" });
-     |             ^ Error: Command failed: npx tsx scripts/ativar-assinatura-teste.ts rh-1790033327068-9783@teste-e2e.local
+     |             ^ Error: Command failed: npx tsx scripts/ativar-assinatura-teste.ts rh-1790245404782-5569@teste-e2e.local
   16 | 
   17 |     await login(page, email, senha);
   18 |     await page.goto("/rh/empresas-cliente");

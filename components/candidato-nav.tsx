@@ -11,6 +11,7 @@ const ITENS = [
   { href: "/candidato/skills", label: "Habilidades", icon: Sparkles },
   { href: "/candidato/vagas", label: "Vagas", icon: Search },
   { href: "/candidato/documentos", label: "Documentos", icon: FileText },
+  { href: "/candidato/recomendadas", label: "Recomendadas", icon: Sparkles },
 ];
 
 export function CandidatoNav() {

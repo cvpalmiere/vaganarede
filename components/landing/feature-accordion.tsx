@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -7,34 +7,34 @@ type Categoria = "candidato" | "empresa" | "agencia";
 const RECURSOS: Record<Categoria, { titulo: string; texto: string }[]> = {
   candidato: [
     { titulo: "Visibilidade do status", texto: "Acompanhe cada etapa da sua candidatura em tempo real." },
-    { titulo: "Linguagem clara", texto: "Sem jargão técnico — informação direta em cada tela." },
+    { titulo: "Linguagem clara", texto: "Sem jargao tecnico - informacao direta em cada tela." },
     { titulo: "Controle total do perfil", texto: "Edite, atualize ou remova seus dados quando quiser." },
-    { titulo: "Consistência", texto: "A mesma ação sempre gera o mesmo resultado, em qualquer tela." },
-    { titulo: "Prevenção de erros", texto: "Validações no cadastro evitam dados incorretos antes de enviar." },
-    { titulo: "Sugestões inteligentes", texto: "Skills e vagas sugeridas, sem precisar decorar nada." },
+    { titulo: "Consistencia", texto: "A mesma acao sempre gera o mesmo resultado, em qualquer tela." },
+    { titulo: "Prevencao de erros", texto: "Validacoes no cadastro evitam dados incorretos antes de enviar." },
+    { titulo: "Sugestoes inteligentes", texto: "Skills e vagas sugeridas, sem precisar decorar nada." },
   ],
   empresa: [
-    { titulo: "Publicação ágil de vagas", texto: "Preencha os campos fixos e a vaga vai ao ar na hora." },
-    { titulo: "Design sem ruído", texto: "Só o que importa pra tomar decisão de contratação." },
-    { titulo: "Mensagens de erro claras", texto: "Você sabe exatamente o que corrigir quando algo falha." },
-    { titulo: "Banco de currículos ranqueado", texto: "Candidatos ordenados por compatibilidade com a vaga." },
-    { titulo: "Painel corporativo", texto: "Visão consolidada de todas as vagas ativas." },
-    { titulo: "Liberação automática de acesso", texto: "Pagou, ativou — sem espera manual de aprovação." },
+    { titulo: "Publicacao agil de vagas", texto: "Preencha os campos fixos e a vaga vai ao ar na hora." },
+    { titulo: "Design sem ruido", texto: "So o que importa pra tomar decisao de contratacao." },
+    { titulo: "Mensagens de erro claras", texto: "Voce sabe exatamente o que corrigir quando algo falha." },
+    { titulo: "Banco de curriculos ranqueado", texto: "Candidatos ordenados por compatibilidade com a vaga." },
+    { titulo: "Painel corporativo", texto: "Visao consolidada de todas as vagas ativas." },
+    { titulo: "Liberacao automatica de acesso", texto: "Pagou, ativou - sem espera manual de aprovacao." },
   ],
   agencia: [
-    { titulo: "Painel master", texto: "Veja todas as empresas-cliente em um só lugar." },
-    { titulo: "Gestão multi-cliente", texto: "Cada empresa-cliente com seu próprio espaço organizado." },
+    { titulo: "Painel master", texto: "Veja todas as empresas-cliente em um so lugar." },
+    { titulo: "Gestao multi-cliente", texto: "Cada empresa-cliente com seu proprio espaco organizado." },
     { titulo: "Vagas por cliente", texto: "Nenhuma vaga se mistura com outro contexto." },
-    { titulo: "Acompanhamento de processos", texto: "Veja o andamento de cada seleção, por cliente." },
-    { titulo: "Organização de candidatos", texto: "Encontre perfis com facilidade entre múltiplas vagas." },
-    { titulo: "Visão consolidada", texto: "Decisões com contexto de toda a operação." },
+    { titulo: "Acompanhamento de processos", texto: "Veja o andamento de cada selecao, por cliente." },
+    { titulo: "Organizacao de candidatos", texto: "Encontre perfis com facilidade entre multiplas vagas." },
+    { titulo: "Visao consolidada", texto: "Decisoes com contexto de toda a operacao." },
   ],
 };
 
 const CATEGORIAS: { id: Categoria; titulo: string; subtitulo: string }[] = [
-  { id: "candidato", titulo: "Candidato", subtitulo: "Encontre sua próxima oportunidade." },
+  { id: "candidato", titulo: "Candidato", subtitulo: "Encontre sua proxima oportunidade." },
   { id: "empresa", titulo: "Empresa", subtitulo: "Contrate com mais clareza." },
-  { id: "agencia", titulo: "Empresa de RH", subtitulo: "Conecte toda a operação." },
+  { id: "agencia", titulo: "Empresa de RH", subtitulo: "Conecte toda a operacao." },
 ];
 
 export function FeatureAccordion() {

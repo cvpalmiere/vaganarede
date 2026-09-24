@@ -16,11 +16,11 @@ Error: expect(locator).toBeVisible() failed
 
 Locator: getByText(/email ou senha invalidos/i)
 Expected: visible
-Timeout: 5000ms
+Timeout: 15000ms
 Error: element(s) not found
 
 Call log:
-  - Expect "toBeVisible" getByText(/email ou senha invalidos/i) with timeout 5000ms
+  - Expect "toBeVisible" getByText(/email ou senha invalidos/i) with timeout 15000ms
   - waiting for getByText(/email ou senha invalidos/i)
 
 ```
@@ -70,10 +70,11 @@ Call log:
   21 |     await page.locator('input[type="email"]').fill("naoexiste@teste-e2e.local");
   22 |     await page.locator('input[type="password"]').fill("senhaerrada123");
   23 |     await page.getByRole("button", { name: /entrar/i }).click();
-> 24 |     await expect(page.getByText(/email ou senha invalidos/i)).toBeVisible();
+> 24 |     await expect(page.getByText(/email ou senha invalidos/i)).toBeVisible({ timeout: 15000 });
      |                                                               ^ Error: expect(locator).toBeVisible() failed
   25 |     await expect(page).toHaveURL(/\/login/);
   26 |   });
   27 | });
   28 | 
+  29 | 
 ```

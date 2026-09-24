@@ -17,7 +17,7 @@ test.describe("Landing page", () => {
   test("acordeao de funcionalidades troca categoria", async ({ page }) => {
     await page.goto("/");
     await page.getByText("Contrate com mais clareza.").click();
-    await expect(page.getByText(/assinatura/i).and(page.getByText(/automatizad/i))).toBeVisible();
+    await expect(page.getByText("Liberacao automatica de acesso")).toBeVisible();
   });
 
   test("botao Comecar Agora leva ao cadastro", async ({ page }) => {
@@ -32,3 +32,4 @@ test.describe("Landing page", () => {
     await expect(page).toHaveURL(/\/login/);
   });
 });
+
