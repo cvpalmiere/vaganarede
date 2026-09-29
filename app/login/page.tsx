@@ -8,7 +8,7 @@ import { Logo } from "@/components/logo";
 
 const ROTA_POR_TIPO: Record<string, string> = {
   CANDIDATO: "/candidato",
-  EMPRESA: "/empresa",
+  EMPRESA: "/empresa/vagas",
   EMPRESA_RH: "/rh",
   ADMIN: "/admin",
 };
@@ -102,3 +102,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
