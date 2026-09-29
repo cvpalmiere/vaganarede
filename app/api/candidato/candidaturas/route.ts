@@ -42,6 +42,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ erro: "Vaga nao encontrada" }, { status: 404 });
   }
 
+  const { criarNotificacao } = await import("@/lib/notificacoes");
+  await criarNotificacao(candidato.id, "NOVA_CANDIDATURA", { tituloVaga: vaga.titulo, empresa: "" }).catch(() => {});
+
   try {
     const candidatura = await prisma.candidatura.create({
       data: {

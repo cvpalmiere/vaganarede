@@ -67,5 +67,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     data: { status: parsed.data.status },
   });
 
+  const { criarNotificacao } = await import("@/lib/notificacoes");
+  await criarNotificacao(candidatura.candidatoId, "MUDANCA_STATUS", { tituloVaga: vaga.titulo, status: parsed.data.status }).catch(() => {});
+
   return NextResponse.json({ ok: true, candidatura: atualizada });
 }
