@@ -14,14 +14,14 @@ const baseSchema = z.object({
 
 const candidatoSchema = baseSchema.extend({
   tipo: z.literal("CANDIDATO"),
-  cpf: z.string().min(11),
+  cpf: z.string().transform((v) => v.replace(/\D/g, "")).pipe(z.string().length(11)),
   escolaridade: z.string().min(2),
   curso: z.string().min(2),
 });
 
 const empresaSchema = baseSchema.extend({
   tipo: z.enum(["EMPRESA", "EMPRESA_RH"]),
-  cnpj: z.string().min(14),
+  cnpj: z.string().transform((v) => v.replace(/\D/g, "")).pipe(z.string().length(14)),
   telefone: z.string().min(10),
   cidade: z.string().min(2),
 });

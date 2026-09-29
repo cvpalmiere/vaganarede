@@ -10,7 +10,8 @@
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
     "test:e2e:report": "npx playwright show-report",
-    "seed": "dotenv -e .env -- npx tsx --conditions=react-server scripts/seed-contas.ts"
+    "seed": "dotenv -e .env -- npx tsx --conditions=react-server scripts/seed-contas.ts",
+    "reset:teste": "dotenv -e .env -- npx tsx --conditions=react-server scripts/reset-banco-teste.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
