@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { UserCircle, Building2, Network, ArrowRight } from "lucide-react";
+import { formatarCnpj, formatarCpf, formatarTelefone } from "@/lib/mascaras";
 
 type TipoUsuario = "CANDIDATO" | "EMPRESA" | "EMPRESA_RH";
 
@@ -43,7 +44,7 @@ export function CadastroForm() {
         throw new Error(errData.erro || "Erro ao criar conta");
       }
 
-  // login automatico logo apos o cadastro - sem isso nao existe sessao e o layout te manda de volta pro /login
+      // login automatico logo apos o cadastro - sem isso nao existe sessao e o layout te manda de volta pro /login
       const resLogin = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -129,7 +130,7 @@ export function CadastroForm() {
           <>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">CPF</label>
-              <input name="cpf" type="text" required maxLength={14} className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
+              <input name="cpf" type="text" required maxLength={14} onChange={(e) => { e.target.value = formatarCpf(e.target.value); }} className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">Nível de Escolaridade</label>
@@ -152,11 +153,11 @@ export function CadastroForm() {
           <>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">CNPJ</label>
-              <input name="cnpj" type="text" required maxLength={18} className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
+              <input name="cnpj" type="text" required maxLength={18} onChange={(e) => { e.target.value = formatarCnpj(e.target.value); }} className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">Telefone / WhatsApp</label>
-              <input name="telefone" type="text" required className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
+              <input name="telefone" type="text" required onChange={(e) => { e.target.value = formatarTelefone(e.target.value); }} className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">Cidade Sede</label>
