@@ -48,8 +48,8 @@ export async function POST(request: Request) {
   });
   if (!empresa) return NextResponse.json({ erro: "Empresa nao encontrada" }, { status: 404 });
 
-  if (empresa.assinatura?.status !== "ATIVO") {
-    return NextResponse.json({ erro: "Assinatura inativa" }, { status: 403 });
+  if (!empresa.aprovado) {
+    return NextResponse.json({ erro: "Cadastro ainda nao aprovado" }, { status: 403 });
   }
 
   const coordenadas = await geocodificarCidade(parsed.data.cidade);

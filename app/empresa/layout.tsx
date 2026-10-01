@@ -7,12 +7,9 @@ export default async function EmpresaLayout({ children }: { children: React.Reac
   const usuario = await getSessionUser();
   if (!usuario || usuario.tipo !== "EMPRESA") redirect("/login");
 
-  const empresa = await prisma.empresa.findUnique({
-    where: { usuarioId: usuario.id },
-    include: { assinatura: true },
-  });
+  const empresa = await prisma.empresa.findUnique({ where: { usuarioId: usuario.id } });
 
-  if (empresa?.assinatura?.status !== "ATIVO") redirect("/empresa/assinatura");
+  if (!empresa?.aprovado) redirect("/empresa/pendente-aprovacao");
 
   return (
     <div className="min-h-screen bg-off-white">

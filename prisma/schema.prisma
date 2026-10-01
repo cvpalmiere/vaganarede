@@ -197,6 +197,7 @@ model Empresa {
   cnpjHash          String           @unique
   cnpjCriptografado String
   cnpjVerificado    Boolean          @default(false)
+  aprovado          Boolean          @default(false)
   telefone          String
   cidade            String
 
@@ -222,6 +223,7 @@ model EmpresaRh {
   razaoSocial       String
   cnpjHash          String    @unique
   cnpjCriptografado String
+  aprovado          Boolean   @default(false)
 
   empresasCliente   Empresa[]
   assinatura        Assinatura?

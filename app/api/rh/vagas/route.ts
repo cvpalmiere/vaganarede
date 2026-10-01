@@ -41,10 +41,10 @@ export async function POST(request: Request) {
 
   const empresaRh = await prisma.empresaRh.findUnique({
     where: { usuarioId: usuario.id },
-    include: { assinatura: true },
   });
-  if (empresaRh?.assinatura?.status !== "ATIVO") {
-    return NextResponse.json({ erro: "Assinatura inativa" }, { status: 403 });
+
+  if (!empresaRh || !empresaRh.aprovado) {
+    return NextResponse.json({ erro: "Cadastro pendente de aprovacao" }, { status: 403 });
   }
 
   const parsed = schema.safeParse(await request.json());
@@ -55,18 +55,19 @@ export async function POST(request: Request) {
   const empresaCliente = await prisma.empresa.findFirst({
     where: { id: parsed.data.empresaClienteId, empresaRhId: empresaRh.id },
   });
+
   if (!empresaCliente) return NextResponse.json({ erro: "Empresa-cliente nao encontrada" }, { status: 404 });
 
   const { empresaClienteId, ...dadosVaga } = parsed.data;
   const coordenadas = await geocodificarCidade(dadosVaga.cidade);
 
   const vaga = await prisma.vaga.create({
-    data: {
-      ...dadosVaga,
-      latitude: coordenadas?.latitude ?? 0,
-      longitude: coordenadas?.longitude ?? 0,
-      empresaId: empresaClienteId,
-      status: "ATIVA",
+    data: { 
+      ...dadosVaga, 
+      empresaId: empresaClienteId, 
+      latitude: coordenadas?.latitude ?? 0, 
+      longitude: coordenadas?.longitude ?? 0, 
+      status: "ATIVA" 
     },
   });
 

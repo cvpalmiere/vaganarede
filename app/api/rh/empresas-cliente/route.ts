@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -8,9 +8,8 @@ import { validarCnpj } from "@/lib/cnpj";
 async function empresaRhAtiva(usuarioId: string) {
   const empresaRh = await prisma.empresaRh.findUnique({
     where: { usuarioId },
-    include: { assinatura: true },
   });
-  if (!empresaRh || empresaRh.assinatura?.status !== "ATIVO") return null;
+  if (!empresaRh || !empresaRh.aprovado) return null;
   return empresaRh;
 }
 
@@ -21,7 +20,7 @@ export async function GET() {
   }
 
   const empresaRh = await empresaRhAtiva(usuario.id);
-  if (!empresaRh) return NextResponse.json({ erro: "Assinatura inativa" }, { status: 403 });
+  if (!empresaRh) return NextResponse.json({ erro: "Cadastro pendente de aprovacao" }, { status: 403 });
 
   const empresasCliente = await prisma.empresa.findMany({
     where: { empresaRhId: empresaRh.id },
@@ -46,7 +45,7 @@ export async function POST(request: Request) {
   }
 
   const empresaRh = await empresaRhAtiva(usuario.id);
-  if (!empresaRh) return NextResponse.json({ erro: "Assinatura inativa" }, { status: 403 });
+  if (!empresaRh) return NextResponse.json({ erro: "Cadastro pendente de aprovacao" }, { status: 403 });
 
   const parsed = schema.safeParse(await request.json());
   if (!parsed.success) {
@@ -66,7 +65,6 @@ export async function POST(request: Request) {
         telefone: parsed.data.telefone,
         cidade: parsed.data.cidade,
         empresaRhId: empresaRh.id,
-        // usuarioId fica nulo de proposito - essa empresa nao faz login, so a RH acessa
       },
     });
     return NextResponse.json({ ok: true, empresaCliente });

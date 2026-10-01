@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, LayoutDashboard, CreditCard, Users } from "lucide-react";
+import { LogOut, LayoutDashboard, CreditCard, Users, Building2 } from "lucide-react";
 import { Logo } from "@/components/logo";
 
 export function AdminNav() {
@@ -18,6 +18,7 @@ export function AdminNav() {
   const itens = [
     { href: "/admin", label: "Painel", icon: LayoutDashboard },
     { href: "/admin/assinaturas", label: "Assinaturas", icon: CreditCard },
+    { href: "/admin/empresas", label: "Empresas", icon: Building2 },
     { href: "/admin/usuarios", label: "Usuarios", icon: Users },
   ];
 
