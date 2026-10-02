@@ -1,6 +1,7 @@
 ﻿import "server-only";
 import { prisma } from "@/lib/prisma";
 import { enviarEmail } from "@/lib/email";
+import { enviarWhatsapp } from "@/lib/whatsapp";
 
 type TipoEvento = "NOVA_CANDIDATURA" | "MUDANCA_STATUS" | "VAGA_COMPATIVEL";
 
@@ -34,8 +35,6 @@ function montarHtml(titulo: string, mensagem: string) {
   `;
 }
 
-// registra no banco e, se o candidato tiver email, dispara o envio tambem - as duas coisas sao independentes,
-// uma falhar nao bloqueia a outra
 export async function criarNotificacao(
   candidatoId: string,
   tipo: TipoEvento,
@@ -48,20 +47,23 @@ export async function criarNotificacao(
     data: { candidatoId, canal, titulo, mensagem },
   });
 
-  if (canal === "EMAIL") {
-    const candidato = await prisma.candidato.findUnique({
-      where: { id: candidatoId },
-      include: { usuario: true },
-    });
-    if (candidato?.usuario?.email) {
-      await enviarEmail(candidato.usuario.email, titulo, montarHtml(titulo, mensagem));
-    }
+  const candidato = await prisma.candidato.findUnique({
+    where: { id: candidatoId },
+    include: { usuario: true },
+  });
+  if (!candidato) return notificacao;
 
-    const candidatoComPush = await prisma.candidato.findUnique({ where: { id: candidatoId } });
-    if (candidatoComPush?.pushSubscription) {
-      const { enviarPush } = await import("@/lib/push");
-      await enviarPush(candidatoComPush.pushSubscription, titulo, mensagem);
-    }
+  if (canal === "EMAIL" && candidato.usuario?.email) {
+    await enviarEmail(candidato.usuario.email, titulo, montarHtml(titulo, mensagem));
+  }
+
+  if (candidato.pushSubscription) {
+    const { enviarPush } = await import("@/lib/push");
+    await enviarPush(candidato.pushSubscription, titulo, mensagem);
+  }
+
+  if (candidato.telefone) {
+    await enviarWhatsapp(candidato.telefone, `*${titulo}*\n${mensagem}`);
   }
 
   return notificacao;
