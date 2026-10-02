@@ -18,10 +18,24 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   const isStaticAsset = url.pathname.startsWith("/_next/static") || url.pathname.startsWith("/icon") || url.pathname === "/manifest.json";
-
   if (!isStaticAsset) return;
-
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
+});
+
+self.addEventListener("push", (event) => {
+  const dados = event.data ? event.data.json() : { title: "Vagas na Rede", body: "Você tem uma novidade." };
+  event.waitUntil(
+    self.registration.showNotification(dados.title, {
+      body: dados.body,
+      icon: "/icon-192.png",
+      data: { url: dados.url || "/" },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url));
 });

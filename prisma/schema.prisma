@@ -129,6 +129,7 @@ model Candidato {
   githubUrl          String?
   resumoProfissional String?
   completudePerfil   Int                  @default(0)
+  pushSubscription   String?
 
   documentos         DocumentoCandidato[]
   skills             CandidatoSkill[]

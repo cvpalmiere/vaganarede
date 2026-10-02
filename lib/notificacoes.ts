@@ -56,6 +56,12 @@ export async function criarNotificacao(
     if (candidato?.usuario?.email) {
       await enviarEmail(candidato.usuario.email, titulo, montarHtml(titulo, mensagem));
     }
+
+    const candidatoComPush = await prisma.candidato.findUnique({ where: { id: candidatoId } });
+    if (candidatoComPush?.pushSubscription) {
+      const { enviarPush } = await import("@/lib/push");
+      await enviarPush(candidatoComPush.pushSubscription, titulo, mensagem);
+    }
   }
 
   return notificacao;
