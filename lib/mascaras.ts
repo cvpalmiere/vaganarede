@@ -1,5 +1,4 @@
-﻿// formata o valor enquanto a pessoa digita, sempre baseado so nos digitos - nunca deixa o campo ficar com pontuacao "presa"
-export function formatarCnpj(valorBruto: string): string {
+﻿export function formatarCnpj(valorBruto: string): string {
   const d = valorBruto.replace(/\D/g, "").slice(0, 14);
   if (d.length > 12) return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})$/, "$1.$2.$3/$4-$5");
   if (d.length > 8) return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{1,4})$/, "$1.$2.$3/$4");

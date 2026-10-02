@@ -59,14 +59,25 @@ export async function POST(request: Request) {
   if (!empresaCliente) return NextResponse.json({ erro: "Empresa-cliente nao encontrada" }, { status: 404 });
 
   const { empresaClienteId, ...dadosVaga } = parsed.data;
-  const coordenadas = await geocodificarCidade(dadosVaga.cidade);
+  
+  let lat = 0;
+  let lng = 0;
+  try {
+    const coordenadas = await geocodificarCidade(dadosVaga.cidade);
+    if (coordenadas) {
+      lat = coordenadas.latitude;
+      lng = coordenadas.longitude;
+    }
+  } catch (e) {
+    // Falha silenciosa de geocoding para não impedir a criação da vaga
+  }
 
   const vaga = await prisma.vaga.create({
     data: { 
       ...dadosVaga, 
       empresaId: empresaClienteId, 
-      latitude: coordenadas?.latitude ?? 0, 
-      longitude: coordenadas?.longitude ?? 0, 
+      latitude: lat, 
+      longitude: lng, 
       status: "ATIVA" 
     },
   });

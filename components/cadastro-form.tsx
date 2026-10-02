@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,8 +9,8 @@ type TipoUsuario = "CANDIDATO" | "EMPRESA" | "EMPRESA_RH";
 
 const ROTA_APOS_CADASTRO: Record<TipoUsuario, string> = {
   CANDIDATO: "/candidato",
-  EMPRESA: "/empresa/assinatura",
-  EMPRESA_RH: "/rh/assinatura",
+  EMPRESA: "/empresa/pendente-aprovacao",
+  EMPRESA_RH: "/rh/pendente-aprovacao",
 };
 
 export function CadastroForm() {
@@ -44,7 +44,6 @@ export function CadastroForm() {
         throw new Error(errData.erro || "Erro ao criar conta");
       }
 
-      // login automatico logo apos o cadastro - sem isso nao existe sessao e o layout te manda de volta pro /login
       const resLogin = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -101,7 +100,7 @@ export function CadastroForm() {
   return (
     <div className="w-full max-w-md mx-auto p-6 bg-[#18181b] border border-white/10 rounded-2xl shadow-xl text-white">
       <button onClick={() => setEtapa(1)} className="text-sm text-zinc-400 hover:text-yellow-300 mb-6 flex items-center gap-1 transition">
-        ← Voltar e mudar perfil
+        {"<-"} Voltar e mudar perfil
       </button>
 
       <h2 className="text-2xl font-bold mb-6 text-white">
@@ -130,7 +129,15 @@ export function CadastroForm() {
           <>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">CPF</label>
-              <input name="cpf" type="text" required maxLength={14} onChange={(e) => { e.target.value = formatarCpf(e.target.value); }} className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
+              <input
+                name="cpf"
+                type="text"
+                required
+                maxLength={14}
+                placeholder="000.000.000-00"
+                onChange={(e) => { e.target.value = formatarCpf(e.target.value); }}
+                className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">Nível de Escolaridade</label>
@@ -153,11 +160,26 @@ export function CadastroForm() {
           <>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">CNPJ</label>
-              <input name="cnpj" type="text" required maxLength={18} onChange={(e) => { e.target.value = formatarCnpj(e.target.value); }} className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
+              <input
+                name="cnpj"
+                type="text"
+                required
+                maxLength={18}
+                placeholder="00.000.000/0000-00"
+                onChange={(e) => { e.target.value = formatarCnpj(e.target.value); }}
+                className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">Telefone / WhatsApp</label>
-              <input name="telefone" type="text" required onChange={(e) => { e.target.value = formatarTelefone(e.target.value); }} className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none" />
+              <input
+                name="telefone"
+                type="text"
+                required
+                placeholder="(00) 00000-0000"
+                onChange={(e) => { e.target.value = formatarTelefone(e.target.value); }}
+                className="w-full p-3 bg-black/40 border border-white/15 rounded-xl text-white focus:border-yellow-400 focus:outline-none"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1 text-zinc-300">Cidade Sede</label>

@@ -4,7 +4,8 @@ import { Prisma } from "@prisma/client";
 import { supabaseAdmin } from "@/lib/supabase";
 import { prisma } from "@/lib/prisma";
 import { hashDocumento, encryptDocumento } from "@/lib/crypto";
-import { validarCnpj } from "@/lib/cnpj";
+import { validarCnpj, normalizarCnpj } from "@/lib/cnpj";
+import { validarCpf, normalizarCpf } from "@/lib/cpf";
 
 const baseSchema = z.object({
   email: z.string().email(),
@@ -14,14 +15,22 @@ const baseSchema = z.object({
 
 const candidatoSchema = baseSchema.extend({
   tipo: z.literal("CANDIDATO"),
-  cpf: z.string().transform((v) => v.replace(/\D/g, "")).pipe(z.string().length(11)),
-  escolaridade: z.string().min(2),
-  curso: z.string().min(2),
+  cpf: z
+    .string()
+    .transform(normalizarCpf)
+    .refine((v) => v.length === 11, { message: "CPF precisa ter 11 digitos" })
+    .refine(validarCpf, { message: "CPF invalido" }),
+  escolaridade: z.string().optional(),
+  curso: z.string().optional(),
 });
 
 const empresaSchema = baseSchema.extend({
   tipo: z.enum(["EMPRESA", "EMPRESA_RH"]),
-  cnpj: z.string().transform((v) => v.replace(/\D/g, "")).pipe(z.string().length(14)),
+  cnpj: z
+    .string()
+    .transform(normalizarCnpj)
+    .refine((v) => v.length === 14, { message: "CNPJ precisa ter 14 digitos" })
+    .refine(validarCnpj, { message: "CNPJ invalido" }),
   telefone: z.string().min(10),
   cidade: z.string().min(2),
 });
@@ -37,14 +46,12 @@ export async function POST(request: Request) {
   const parsed = signupSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ erro: "Dados invalidos", detalhes: parsed.error.flatten() }, { status: 400 });
+    // pega a primeira mensagem especifica (CPF invalido, CNPJ invalido, etc.) em vez de um erro generico
+    const mensagem = parsed.error.issues[0]?.message ?? "Dados invalidos";
+    return NextResponse.json({ erro: mensagem, detalhes: parsed.error.flatten() }, { status: 400 });
   }
 
   const dados = parsed.data;
-
-  if (dados.tipo !== "CANDIDATO" && !validarCnpj(dados.cnpj)) {
-    return NextResponse.json({ erro: "CNPJ invalido" }, { status: 400 });
-  }
 
   const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
     email: dados.email,
@@ -70,8 +77,8 @@ export async function POST(request: Request) {
             nomeCompleto: dados.nome,
             cpfHash: hashDocumento(dados.cpf),
             cpfCriptografado: encryptDocumento(dados.cpf),
-            escolaridade: dados.escolaridade,
-            curso: dados.curso,
+            escolaridade: dados.escolaridade ?? null,
+            curso: dados.curso ?? null,
             telefone: "",
             cidade: "",
             latitude: 0,
@@ -85,7 +92,7 @@ export async function POST(request: Request) {
       const cnpjCriptografado = encryptDocumento(dados.cnpj);
 
       if (dados.tipo === "EMPRESA") {
-        const empresa = await tx.empresa.create({
+        await tx.empresa.create({
           data: {
             usuarioId: authUser.user.id,
             razaoSocial: dados.nome,
@@ -93,26 +100,20 @@ export async function POST(request: Request) {
             cnpjCriptografado,
             telefone: dados.telefone,
             cidade: dados.cidade,
+            aprovado: false,
           },
-        });
-
-        await tx.assinatura.create({
-          data: { empresaId: empresa.id, plano: "EMPRESA", status: "PENDENTE" },
         });
         return;
       }
 
-      const empresaRh = await tx.empresaRh.create({
+      await tx.empresaRh.create({
         data: {
           usuarioId: authUser.user.id,
           razaoSocial: dados.nome,
           cnpjHash,
           cnpjCriptografado,
+          aprovado: false,
         },
-      });
-
-      await tx.assinatura.create({
-        data: { empresaRhId: empresaRh.id, plano: "EMPRESA_RH", status: "PENDENTE" },
       });
     });
   } catch (dbError) {

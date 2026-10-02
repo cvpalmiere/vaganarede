@@ -1,12 +1,12 @@
-// valida formato + digitos verificadores do CNPJ - sem chamada externa, so matematica
+﻿// valida formato + digitos verificadores do CNPJ - sem chamada externa, so matematica
 export function validarCnpj(cnpjBruto: string): boolean {
-  const cnpj = cnpjBruto.replace(/\D/g, '');
+  const cnpj = cnpjBruto.replace(/\D/g, "");
   if (cnpj.length !== 14) return false;
   if (/^(\d)\1{13}$/.test(cnpj)) return false;
 
   const calcularDigito = (base: string, pesos: number[]) => {
     const soma = base
-      .split('')
+      .split("")
       .reduce((acc, digito, i) => acc + Number(digito) * pesos[i], 0);
     const resto = soma % 11;
     return resto < 2 ? 0 : 11 - resto;
@@ -19,4 +19,9 @@ export function validarCnpj(cnpjBruto: string): boolean {
   const digito2 = calcularDigito(cnpj.slice(0, 12) + digito1, pesos2);
 
   return cnpj.endsWith(`${digito1}${digito2}`);
+}
+
+// so limpa a pontuacao - usado antes de hashear/criptografar, nao valida nada
+export function normalizarCnpj(valor: string): string {
+  return valor.replace(/\D/g, "");
 }
