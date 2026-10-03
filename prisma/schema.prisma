@@ -99,6 +99,7 @@ model Usuario {
   email     String      @unique
   tipo      TipoUsuario
   criadoEm  DateTime    @default(now())
+  consentimentoLgpdEm DateTime?
 
   candidato Candidato?
   empresa   Empresa?

@@ -188,6 +188,16 @@ export function CadastroForm() {
           </>
         )}
 
+        <label className="flex items-start gap-2 text-sm text-zinc-400">
+          <input type="checkbox" name="aceiteTermos" value="true" required className="mt-1" />
+          <span>
+            Li e aceito os{" "}
+            <a href="/termos" target="_blank" className="text-electric-yellow underline">Termos de Uso</a>{" "}
+            e a{" "}
+            <a href="/privacidade" target="_blank" className="text-electric-yellow underline">Politica de Privacidade</a>.
+          </span>
+        </label>
+
         <button disabled={loading} className="w-full mt-4 bg-electric-yellow text-deep-black font-bold py-3.5 rounded-pill transition hover:-translate-y-0.5 disabled:opacity-50">
           {loading ? "Processando..." : "Criar Conta"}
         </button>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { UserCircle, Sparkles, FileText, LogOut, Search } from "lucide-react";
+import { UserCircle, Sparkles, FileText, LogOut, Search, Settings } from "lucide-react";
 import { Logo } from "@/components/logo";
 
 const ITENS = [
@@ -12,6 +12,7 @@ const ITENS = [
   { href: "/candidato/vagas", label: "Vagas", icon: Search },
   { href: "/candidato/documentos", label: "Documentos", icon: FileText },
   { href: "/candidato/recomendadas", label: "Recomendadas", icon: Sparkles },
+  { href: "/candidato/conta", label: "Conta", icon: Settings },
 ];
 
 export function CandidatoNav() {

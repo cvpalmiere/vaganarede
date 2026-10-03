@@ -11,6 +11,7 @@ const baseSchema = z.object({
   email: z.string().email(),
   senha: z.string().min(8),
   nome: z.string().min(2),
+  aceiteTermos: z.literal("true", { errorMap: () => ({ message: "E necessario aceitar os termos de uso" }) }),
 });
 
 const candidatoSchema = baseSchema.extend({
