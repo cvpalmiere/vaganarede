@@ -1,0 +1,9 @@
+﻿User-agent: *
+Allow: /
+Disallow: /candidato/
+Disallow: /empresa/
+Disallow: /rh/
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://vagasnarede.com.br/sitemap.xml

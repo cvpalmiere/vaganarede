@@ -3,6 +3,24 @@ import { ArrowUpRight, ArrowDown, UserCircle, Building2, Network, ShieldCheck, F
 import { HeroPreview } from "@/components/landing/hero-preview";
 import { FeatureAccordion } from "@/components/landing/feature-accordion";
 
+export const metadata = {
+  title: "Vagas na Rede — Matching inteligente entre candidatos e vagas",
+  description: "Conecte-se a vagas compativeis com seu perfil. Cadastro gratuito para candidatos. Empresas e agencias de RH publicam vagas apos aprovacao.",
+  openGraph: {
+    title: "Vagas na Rede",
+    description: "Matching inteligente entre candidatos e vagas.",
+    url: "https://vagasnarede.com.br",
+    siteName: "Vagas na Rede",
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vagas na Rede",
+    description: "Matching inteligente entre candidatos e vagas.",
+  },
+};
+
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
 
 function whatsappLink(mensagem: string) {
