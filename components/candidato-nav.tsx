@@ -29,7 +29,7 @@ export function CandidatoNav() {
     <nav className="bg-deep-black text-white">
       <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
         <Logo variante="branco" altura={18} />
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide max-w-[70vw] sm:max-w-none">
           {ITENS.map((item) => {
             const Icone = item.icon;
             const ativo = pathname === item.href;

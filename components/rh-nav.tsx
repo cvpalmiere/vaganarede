@@ -19,7 +19,7 @@ export function RhNav() {
     <nav className="bg-deep-black text-white">
       <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
         <Logo variante="branco" altura={18} />
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide max-w-[70vw] sm:max-w-none">
           <Link href="/rh/empresas-cliente"
             className={"flex items-center gap-1.5 px-3 py-2 rounded-pill text-xs font-medium transition " +
               (pathname.startsWith("/rh/empresas-cliente") ? "bg-electric-yellow text-deep-black" : "text-gray-300 hover:text-white")}>

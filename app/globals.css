@@ -126,3 +126,6 @@
   background: var(--color-electric-yellow);
   color: var(--color-deep-black);
 }
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

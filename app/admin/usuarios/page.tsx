@@ -34,28 +34,30 @@ export default function UsuariosAdmin() {
       </div>
 
       <div className="glass rounded-card border border-white overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="border-b border-gray-200 text-xs uppercase text-gray-500">
-              <th className="p-4">E-mail</th>
-              <th className="p-4">Tipo</th>
-              <th className="p-4">Cadastro</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map((u) => (
-              <tr key={u.id} className="border-b border-gray-100 last:border-0">
-                <td className="p-4 text-deep-black">{u.email}</td>
-                <td className="p-4">
-                  <span className={"text-xs font-bold px-2.5 py-1 rounded-pill " + (TIPO_COR[u.tipo] || "bg-gray-100")}>
-                    {u.tipo}
-                  </span>
-                </td>
-                <td className="p-4 text-gray-500">{new Date(u.criadoEm).toLocaleDateString("pt-BR")}</td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-gray-200 text-xs uppercase text-gray-500">
+                <th className="p-4">E-mail</th>
+                <th className="p-4">Tipo</th>
+                <th className="p-4">Cadastro</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {usuarios.map((u) => (
+                <tr key={u.id} className="border-b border-gray-100 last:border-0">
+                  <td className="p-4 text-deep-black">{u.email}</td>
+                  <td className="p-4">
+                    <span className={"text-xs font-bold px-2.5 py-1 rounded-pill " + (TIPO_COR[u.tipo] || "bg-gray-100")}>
+                      {u.tipo}
+                    </span>
+                  </td>
+                  <td className="p-4 text-gray-500">{new Date(u.criadoEm).toLocaleDateString("pt-BR")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

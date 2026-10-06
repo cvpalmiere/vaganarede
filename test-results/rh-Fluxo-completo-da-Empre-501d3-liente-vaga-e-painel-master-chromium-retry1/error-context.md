@@ -20,9 +20,9 @@ Timeout: 15000ms
 
 Call log:
   - Expect "toHaveURL" with timeout 15000ms
-    6 × locator resolved to <html lang="pt-BR">…</html>
+    7 × locator resolved to <html lang="pt-BR">…</html>
       - unexpected value "http://localhost:3000/cadastro?tipo=EMPRESA_RH"
-    27 × locator resolved to <html lang="pt-BR">…</html>
+    26 × locator resolved to <html lang="pt-BR">…</html>
        - unexpected value "http://localhost:3000/login"
 
 ```

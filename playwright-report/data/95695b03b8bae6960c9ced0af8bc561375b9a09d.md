@@ -12,37 +12,30 @@
 # Error details
 
 ```
-Error: expect(page).toHaveURL(expected) failed
-
-Expected pattern: /pendente-aprovacao/
-Received string:  "http://localhost:3000/login"
-Timeout: 15000ms
-
-Call log:
-  - Expect "toHaveURL" with timeout 15000ms
-    10 × locator resolved to <html lang="pt-BR">…</html>
-       - unexpected value "http://localhost:3000/cadastro?tipo=EMPRESA"
-    23 × locator resolved to <html lang="pt-BR">…</html>
-       - unexpected value "http://localhost:3000/login"
-
+Error: locator.fill: value: expected string, got undefined
 ```
 
+# Page snapshot
+
 ```yaml
-- alert
-- link "Vagas na Rede":
-  - /url: /
-  - img "Vagas na Rede"
-- heading "Entrar" [level=1]
-- paragraph: Acesse sua conta no Vagas na Rede.
-- text: E-mail
-- textbox
-- text: Senha
-- textbox
-- button "Entrar"
-- link "Ainda não tem conta? Fale com a gente":
-  - /url: https://wa.me/undefined
-  - img
-  - text: Ainda não tem conta? Fale com a gente
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - link [ref=e5] [cursor=pointer]:
+      - /url: /
+      - img "Vagas na Rede" [ref=e6]
+    - heading "Entrar" [level=1] [ref=e7]
+    - paragraph [ref=e8]: Acesse sua conta no Vagas na Rede.
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - text: E-mail
+        - textbox [ref=e11]
+      - generic [ref=e12]:
+        - text: Senha
+        - textbox [ref=e13]
+      - button "Entrar" [ref=e14]
+    - link "Ainda não tem conta? Fale com a gente" [ref=e15] [cursor=pointer]:
+      - /url: https://wa.me/undefined
+  - alert [ref=e18]
 ```
 
 # Test source
@@ -106,15 +99,15 @@ Call log:
   56 |   await page.locator('[name="cidade"]').fill("Brasilia");
   57 |   await page.locator('[name="aceiteTermos"]').check();
   58 |   await page.getByRole("button", { name: /criar conta/i }).click();
-> 59 |   await expect(page).toHaveURL(/pendente-aprovacao/, { timeout: 15000 });
-     |                      ^ Error: expect(page).toHaveURL(expected) failed
+  59 |   await expect(page).toHaveURL(/pendente-aprovacao/, { timeout: 15000 });
   60 | 
   61 |   return { email, senha };
   62 | }
   63 | 
   64 | export async function login(page: Page, email: string, senha: string) {
   65 |   await page.goto("/login");
-  66 |   await page.locator('input[type="email"]').fill(email);
+> 66 |   await page.locator('input[type="email"]').fill(email);
+     |                                             ^ Error: locator.fill: value: expected string, got undefined
   67 |   await page.locator('input[type="password"]').fill(senha);
   68 |   await page.getByRole("button", { name: /entrar/i }).click();
   69 |   await page.waitForLoadState("networkidle");

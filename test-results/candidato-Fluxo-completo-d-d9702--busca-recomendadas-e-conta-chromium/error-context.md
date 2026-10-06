@@ -12,137 +12,142 @@
 # Error details
 
 ```
-Error: expect(page).toHaveURL(expected) failed
+Error: expect(locator).toBeVisible() failed
 
-Expected pattern: /\/candidato/
-Received string:  "http://localhost:3000/login"
-Timeout: 15000ms
+Locator: getByText(/perfil atualizado com sucesso/i)
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
 
 Call log:
-  - Expect "toHaveURL" with timeout 15000ms
-    7 × locator resolved to <html lang="pt-BR">…</html>
-      - unexpected value "http://localhost:3000/cadastro"
-    26 × locator resolved to <html lang="pt-BR">…</html>
-       - unexpected value "http://localhost:3000/login"
+  - Expect "toBeVisible" getByText(/perfil atualizado com sucesso/i) with timeout 5000ms
+  - waiting for getByText(/perfil atualizado com sucesso/i)
 
 ```
 
 ```yaml
+- navigation:
+  - link "Vagas na Rede":
+    - /url: /
+    - img "Vagas na Rede"
+  - link "Painel":
+    - /url: /candidato
+    - img
+    - text: Painel
+  - link "Perfil":
+    - /url: /candidato/perfil
+    - img
+    - text: Perfil
+  - link "Habilidades":
+    - /url: /candidato/skills
+    - img
+    - text: Habilidades
+  - link "Vagas":
+    - /url: /candidato/vagas
+    - img
+    - text: Vagas
+  - link "Documentos":
+    - /url: /candidato/documentos
+    - img
+    - text: Documentos
+  - link "Recomendadas":
+    - /url: /candidato/recomendadas
+    - img
+    - text: Recomendadas
+  - link "Conta":
+    - /url: /candidato/conta
+    - img
+    - text: Conta
+  - button "Sair":
+    - img
+    - text: Sair
+- main:
+  - heading "Seu Perfil" [level=1]
+  - text: Telefone
+  - textbox: "61988887777"
+  - text: Cidade
+  - textbox
+  - text: LinkedIn
+  - textbox "https://linkedin.com/in/seu-perfil": https://linkedin.com/in/teste-e2e
+  - text: GitHub
+  - textbox "https://github.com/seu-usuario"
+  - text: Resumo profissional
+  - textbox
+  - paragraph: Erro ao salvar. Tenta de novo.
+  - button "Salvar Perfil"
 - alert
-- link "Vagas na Rede":
-  - /url: /
-  - img "Vagas na Rede"
-- heading "Entrar" [level=1]
-- paragraph: Acesse sua conta no Vagas na Rede.
-- text: E-mail
-- textbox
-- text: Senha
-- textbox
-- button "Entrar"
-- link "Ainda não tem conta? Fale com a gente":
-  - /url: https://wa.me/undefined
-  - img
-  - text: Ainda não tem conta? Fale com a gente
 ```
 
 # Test source
 
 ```ts
-  1  | ﻿import { Page, APIRequestContext, expect } from "@playwright/test";
-  2  | 
-  3  | export function emailUnico(prefixo: string) {
-  4  |   return `${prefixo}-${Date.now()}-${Math.floor(Math.random() * 100000)}@teste-e2e.local`;
-  5  | }
-  6  | 
-  7  | function calcDv(nums: number[], pesos: number[]) {
-  8  |   const soma = nums.reduce((acc, n, i) => acc + n * pesos[i], 0);
-  9  |   const resto = soma % 11;
-  10 |   return resto < 2 ? 0 : 11 - resto;
-  11 | }
-  12 | 
-  13 | export function cnpjValido(): string {
-  14 |   const base = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10));
-  15 |   const d1 = calcDv(base, [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
-  16 |   const d2 = calcDv([...base, d1], [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
-  17 |   return [...base, d1, d2].join("");
-  18 | }
-  19 | 
-  20 | export function cpfValido(): string {
-  21 |   const base = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
-  22 |   const d1 = calcDv(base, [10, 9, 8, 7, 6, 5, 4, 3, 2]);
-  23 |   const d2 = calcDv([...base, d1], [11, 10, 9, 8, 7, 6, 5, 4, 3, 2]);
-  24 |   return [...base, d1, d2].join("");
-  25 | }
-  26 | 
-  27 | export async function cadastrarCandidato(page: Page) {
-  28 |   const email = emailUnico("candidato");
-  29 |   const senha = "senhaTeste12345";
-  30 | 
-  31 |   await page.goto("/cadastro");
-  32 |   await page.getByText("Sou Estudante").click();
-  33 |   await page.locator('[name="nome"]').fill("Candidato Teste E2E");
-  34 |   await page.locator('[name="email"]').fill(email);
-  35 |   await page.locator('[name="senha"]').fill(senha);
-  36 |   await page.locator('[name="cpf"]').fill(cpfValido());
-  37 |   await page.locator('select[name="escolaridade"]').selectOption("Superior Completo");
-  38 |   await page.locator('[name="curso"]').fill("Engenharia de Software");
-  39 |   await page.locator('[name="aceiteTermos"]').check();
-  40 |   await page.getByRole("button", { name: /criar conta/i }).click();
-> 41 |   await expect(page).toHaveURL(/\/candidato/, { timeout: 15000 });
-     |                      ^ Error: expect(page).toHaveURL(expected) failed
-  42 | 
-  43 |   return { email, senha };
-  44 | }
-  45 | 
-  46 | export async function cadastrarEmpresa(page: Page, tipo: "EMPRESA" | "EMPRESA_RH") {
-  47 |   const email = emailUnico(tipo === "EMPRESA" ? "empresa" : "rh");
-  48 |   const senha = "senhaTeste12345";
-  49 | 
-  50 |   await page.goto(`/cadastro?tipo=${tipo}`);
-  51 |   await page.locator('[name="nome"]').fill("Empresa Teste E2E LTDA");
-  52 |   await page.locator('[name="email"]').fill(email);
-  53 |   await page.locator('[name="senha"]').fill(senha);
-  54 |   await page.locator('[name="cnpj"]').fill(cnpjValido());
-  55 |   await page.locator('[name="telefone"]').fill("61999999999");
-  56 |   await page.locator('[name="cidade"]').fill("Brasilia");
-  57 |   await page.locator('[name="aceiteTermos"]').check();
-  58 |   await page.getByRole("button", { name: /criar conta/i }).click();
-  59 |   await expect(page).toHaveURL(/pendente-aprovacao/, { timeout: 15000 });
-  60 | 
-  61 |   return { email, senha };
-  62 | }
-  63 | 
-  64 | export async function login(page: Page, email: string, senha: string) {
-  65 |   await page.goto("/login");
-  66 |   await page.locator('input[type="email"]').fill(email);
-  67 |   await page.locator('input[type="password"]').fill(senha);
-  68 |   await page.getByRole("button", { name: /entrar/i }).click();
-  69 |   await page.waitForLoadState("networkidle");
-  70 | }
-  71 | 
-  72 | export async function loginAdmin(page: Page) {
-  73 |   await login(page, process.env.SEED_ADMIN_EMAIL!, process.env.SEED_ADMIN_SENHA!);
-  74 |   await expect(page).toHaveURL(/\/admin/, { timeout: 15000 });
-  75 | }
-  76 | 
-  77 | // aprova empresa/RH direto pela API, autenticado como admin - usado so para preparar cenario de teste,
-  78 | // nao substitui o teste de clique real que existe em tests/admin.spec.ts
-  79 | export async function aprovarComoAdmin(request: APIRequestContext, tipo: "EMPRESA" | "EMPRESA_RH", email: string) {
-  80 |   const loginResp = await request.post("/api/auth/login", {
-  81 |     data: { email: process.env.SEED_ADMIN_EMAIL, senha: process.env.SEED_ADMIN_SENHA },
-  82 |   });
-  83 |   expect(loginResp.ok()).toBeTruthy();
-  84 | 
-  85 |   const listaResp = await request.get("/api/admin/empresas");
-  86 |   const lista = await listaResp.json();
-  87 |   const colecao = tipo === "EMPRESA" ? lista.empresas : lista.empresasRh;
-  88 |   const item = colecao.find((e: { usuario: { email: string } }) => e.usuario.email === email);
-  89 |   expect(item, `empresa com email ${email} nao encontrada na lista do admin`).toBeTruthy();
-  90 | 
-  91 |   const patchResp = await request.patch("/api/admin/empresas", {
-  92 |     data: { tipo, id: item.id, aprovado: true },
-  93 |   });
-  94 |   expect(patchResp.ok()).toBeTruthy();
-  95 | }
-  96 | 
+  1  | ﻿import { test, expect } from "@playwright/test";
+  2  | import { cadastrarCandidato, login } from "./helpers";
+  3  | 
+  4  | test.describe("Fluxo completo do Candidato", () => {
+  5  |   test("cadastro, perfil, skills, busca, recomendadas e conta", async ({ page }) => {
+  6  |     const { email, senha } = await cadastrarCandidato(page);
+  7  | 
+  8  |     // painel inicial
+  9  |     await expect(page.getByText(/completude do perfil/i)).toBeVisible();
+  10 | 
+  11 |     // perfil
+  12 |     await page.goto("/candidato/perfil");
+  13 |     await page.locator('input[type="tel"]').fill("61988887777");
+  14 |     await page.locator('input[type="url"]').first().fill("https://linkedin.com/in/teste-e2e");
+  15 |     await page.getByRole("button", { name: /salvar perfil/i }).click();
+> 16 |     await expect(page.getByText(/perfil atualizado com sucesso/i)).toBeVisible();
+     |                                                                    ^ Error: expect(locator).toBeVisible() failed
+  17 | 
+  18 |     // skills
+  19 |     await page.goto("/candidato/skills");
+  20 |     await page.getByPlaceholder(/ex: react/i).fill("TypeScript");
+  21 |     await page.getByRole("button", { name: /^adicionar$/i }).click();
+  22 |     await expect(page.getByText("typescript")).toBeVisible({ timeout: 5000 });
+  23 | 
+  24 |     // busca de vagas - filtros existem e o botao filtra sem erro
+  25 |     await page.goto("/candidato/vagas");
+  26 |     await expect(page.getByRole("button", { name: /^filtrar$/i })).toBeVisible();
+  27 |     await page.getByRole("button", { name: /^filtrar$/i }).click();
+  28 | 
+  29 |     // documentos - tela carrega com o formulario de upload
+  30 |     await page.goto("/candidato/documentos");
+  31 |     await expect(page.getByRole("button", { name: /enviar documento/i })).toBeVisible();
+  32 | 
+  33 |     // recomendadas
+  34 |     await page.goto("/candidato/recomendadas");
+  35 |     await expect(page.getByRole("heading", { name: /vagas recomendadas/i })).toBeVisible();
+  36 | 
+  37 |     // minha conta - exportacao de dados responde com sucesso
+  38 |     await page.goto("/candidato/conta");
+  39 |     const [download] = await Promise.all([
+  40 |       page.waitForEvent("download"),
+  41 |       page.getByRole("button", { name: /baixar meus dados/i }).click(),
+  42 |     ]);
+  43 |     expect(download.suggestedFilename()).toContain("meus-dados");
+  44 | 
+  45 |     // relogin pra garantir que a sessao ainda e valida apos tudo isso
+  46 |     await page.goto("/login");
+  47 |     await login(page, email, senha);
+  48 |     await expect(page).toHaveURL(/\/candidato/);
+  49 |   });
+  50 | 
+  51 |   test("candidato consegue excluir a propria conta (LGPD)", async ({ page }) => {
+  52 |     const { email, senha } = await cadastrarCandidato(page);
+  53 |     await login(page, email, senha);
+  54 | 
+  55 |     await page.goto("/candidato/conta");
+  56 |     await page.getByRole("button", { name: /quero excluir minha conta/i }).click();
+  57 |     await page.getByRole("button", { name: /sim, excluir permanentemente/i }).click();
+  58 |     await expect(page).toHaveURL("/", { timeout: 15000 });
+  59 | 
+  60 |     // conta excluida nao consegue mais logar
+  61 |     await page.goto("/login");
+  62 |     await page.locator('input[type="email"]').fill(email);
+  63 |     await page.locator('input[type="password"]').fill(senha);
+  64 |     await page.getByRole("button", { name: /entrar/i }).click();
+  65 |     await expect(page.getByText(/email ou senha invalidos/i)).toBeVisible({ timeout: 15000 });
+  66 |   });
+  67 | });
+  68 | 
 ```

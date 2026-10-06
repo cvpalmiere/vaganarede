@@ -38,32 +38,34 @@ export default function AssinaturasAdmin() {
       <h1 className="text-2xl font-bold text-deep-black">Assinaturas</h1>
 
       <div className="glass rounded-card border border-white overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="border-b border-gray-200 text-xs uppercase text-gray-500">
-              <th className="p-4">Empresa</th>
-              <th className="p-4">Plano</th>
-              <th className="p-4">Status</th>
-              <th className="p-4">Desde</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assinaturas.map((a) => (
-              <tr key={a.id} className="border-b border-gray-100 last:border-0">
-                <td className="p-4 font-medium text-deep-black">
-                  {a.empresa?.razaoSocial || a.empresaRh?.razaoSocial || "-"}
-                </td>
-                <td className="p-4 text-gray-600">{a.plano}</td>
-                <td className="p-4">
-                  <span className={"text-xs font-bold px-2.5 py-1 rounded-pill " + (STATUS_COR[a.status] || "bg-gray-100")}>
-                    {a.status}
-                  </span>
-                </td>
-                <td className="p-4 text-gray-500">{new Date(a.criadoEm).toLocaleDateString("pt-BR")}</td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-gray-200 text-xs uppercase text-gray-500">
+                <th className="p-4">Empresa</th>
+                <th className="p-4">Plano</th>
+                <th className="p-4">Status</th>
+                <th className="p-4">Desde</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {assinaturas.map((a) => (
+                <tr key={a.id} className="border-b border-gray-100 last:border-0">
+                  <td className="p-4 font-medium text-deep-black">
+                    {a.empresa?.razaoSocial || a.empresaRh?.razaoSocial || "-"}
+                  </td>
+                  <td className="p-4 text-gray-600">{a.plano}</td>
+                  <td className="p-4">
+                    <span className={"text-xs font-bold px-2.5 py-1 rounded-pill " + (STATUS_COR[a.status] || "bg-gray-100")}>
+                      {a.status}
+                    </span>
+                  </td>
+                  <td className="p-4 text-gray-500">{new Date(a.criadoEm).toLocaleDateString("pt-BR")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

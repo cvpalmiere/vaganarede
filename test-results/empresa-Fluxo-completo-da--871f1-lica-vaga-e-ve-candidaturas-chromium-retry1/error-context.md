@@ -12,15 +12,37 @@
 # Error details
 
 ```
-Error: expect(received).toBeTruthy()
+Error: expect(page).toHaveURL(expected) failed
 
-Received: false
+Expected pattern: /pendente-aprovacao/
+Received string:  "http://localhost:3000/login"
+Timeout: 15000ms
+
+Call log:
+  - Expect "toHaveURL" with timeout 15000ms
+    7 × locator resolved to <html lang="pt-BR">…</html>
+      - unexpected value "http://localhost:3000/cadastro?tipo=EMPRESA"
+    26 × locator resolved to <html lang="pt-BR">…</html>
+       - unexpected value "http://localhost:3000/login"
+
 ```
 
-# Page snapshot
-
 ```yaml
-- alert [ref=e1]
+- alert
+- link "Vagas na Rede":
+  - /url: /
+  - img "Vagas na Rede"
+- heading "Entrar" [level=1]
+- paragraph: Acesse sua conta no Vagas na Rede.
+- text: E-mail
+- textbox
+- text: Senha
+- textbox
+- button "Entrar"
+- link "Ainda não tem conta? Fale com a gente":
+  - /url: https://wa.me/undefined
+  - img
+  - text: Ainda não tem conta? Fale com a gente
 ```
 
 # Test source
@@ -84,7 +106,8 @@ Received: false
   56 |   await page.locator('[name="cidade"]').fill("Brasilia");
   57 |   await page.locator('[name="aceiteTermos"]').check();
   58 |   await page.getByRole("button", { name: /criar conta/i }).click();
-  59 |   await expect(page).toHaveURL(/pendente-aprovacao/, { timeout: 15000 });
+> 59 |   await expect(page).toHaveURL(/pendente-aprovacao/, { timeout: 15000 });
+     |                      ^ Error: expect(page).toHaveURL(expected) failed
   60 | 
   61 |   return { email, senha };
   62 | }
@@ -108,8 +131,7 @@ Received: false
   80 |   const loginResp = await request.post("/api/auth/login", {
   81 |     data: { email: process.env.SEED_ADMIN_EMAIL, senha: process.env.SEED_ADMIN_SENHA },
   82 |   });
-> 83 |   expect(loginResp.ok()).toBeTruthy();
-     |                          ^ Error: expect(received).toBeTruthy()
+  83 |   expect(loginResp.ok()).toBeTruthy();
   84 | 
   85 |   const listaResp = await request.get("/api/admin/empresas");
   86 |   const lista = await listaResp.json();
