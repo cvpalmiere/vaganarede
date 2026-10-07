@@ -3,8 +3,6 @@
 type Registro = { tentativas: number; resetEm: number };
 const registros = new Map<string, Registro>();
 
-// limite simples em memoria - por IP + rota. Funciona bem para 1 instancia de servidor;
-// se o projeto escalar para multiplas instancias (ex: varias regioes na Vercel), substituir por Redis compartilhado (ex: Upstash)
 export function verificarLimite(chave: string, maxTentativas: number, janelaMs: number): boolean {
   const agora = Date.now();
   const registro = registros.get(chave);
@@ -25,4 +23,12 @@ export function verificarLimite(chave: string, maxTentativas: number, janelaMs: 
 export function obterIp(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
   return forwarded ? forwarded.split(",")[0].trim() : "desconhecido";
+}
+
+// bypass EXCLUSIVO para testes automatizados - so funciona se a env E2E_BYPASS_KEY existir no servidor
+// E o header bater com ela. Em producao essa env nunca e definida, entao o bypass fica permanentemente desligado la.
+export function requisicaoEhDeTesteE2E(request: Request): boolean {
+  const chaveServidor = process.env.E2E_BYPASS_KEY;
+  if (!chaveServidor) return false;
+  return request.headers.get("x-e2e-bypass") === chaveServidor;
 }
