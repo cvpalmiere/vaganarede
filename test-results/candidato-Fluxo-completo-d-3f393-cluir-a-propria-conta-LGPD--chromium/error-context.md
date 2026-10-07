@@ -32,7 +32,7 @@ Call log:
 - heading "Entrar" [level=1]
 - paragraph: Acesse sua conta no Vagas na Rede.
 - text: E-mail
-- textbox: candidato-1791286151465-18858@teste-e2e.local
+- textbox: candidato-1791368925466-15577@teste-e2e.local
 - text: Senha
 - textbox: senhaTeste12345
 - paragraph: Muitas tentativas. Tente novamente em alguns minutos.
