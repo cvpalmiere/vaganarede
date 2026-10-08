@@ -31,6 +31,9 @@ export function CadastroForm() {
     const formData = new FormData(e.currentTarget);
     const dados = Object.fromEntries(formData.entries());
     dados.tipo = tipo;
+    
+    // CORREÇÃO: Força a conversão do checkbox para string "true" ou "false" para o Zod não falhar silenciosamente
+    dados.aceiteTermos = formData.get("aceiteTermos") ? "true" : "false";
 
     try {
       const res = await fetch("/api/auth/signup", {

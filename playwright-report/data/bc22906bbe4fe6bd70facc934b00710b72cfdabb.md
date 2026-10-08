@@ -15,34 +15,48 @@
 Error: expect(page).toHaveURL(expected) failed
 
 Expected pattern: /pendente-aprovacao/
-Received string:  "http://localhost:3000/login"
+Received string:  "http://localhost:3000/cadastro?tipo=EMPRESA_RH"
 Timeout: 15000ms
 
 Call log:
   - Expect "toHaveURL" with timeout 15000ms
-    7 × locator resolved to <html lang="pt-BR">…</html>
-      - unexpected value "http://localhost:3000/cadastro?tipo=EMPRESA_RH"
-    26 × locator resolved to <html lang="pt-BR">…</html>
-       - unexpected value "http://localhost:3000/login"
+    33 × locator resolved to <html lang="pt-BR">…</html>
+       - unexpected value "http://localhost:3000/cadastro?tipo=EMPRESA_RH"
 
 ```
 
 ```yaml
+- banner:
+  - link "Vagas na Rede":
+    - /url: /
+    - img "Vagas na Rede"
+- main:
+  - button "<- Voltar e mudar perfil"
+  - heading "Cadastro Corporativo" [level=2]
+  - paragraph: Muitas tentativas de cadastro. Tente novamente mais tarde.
+  - text: Nome da Empresa
+  - textbox: Empresa Teste E2E LTDA
+  - text: E-mail
+  - textbox: rh-1791467701755-49256@teste-e2e.local
+  - text: Senha
+  - textbox: senhaTeste12345
+  - text: CNPJ
+  - textbox "00.000.000/0000-00": 83.677.035/1648-90
+  - text: Telefone / WhatsApp
+  - textbox "(00) 00000-0000": (61) 99999-9999
+  - text: Cidade Sede
+  - textbox: Brasilia
+  - checkbox "Li e aceito os Termos de Uso e a Politica de Privacidade." [checked]
+  - text: Li e aceito os
+  - link "Termos de Uso":
+    - /url: /termos
+  - text: e a
+  - link "Politica de Privacidade":
+    - /url: /privacidade
+  - text: .
+  - button "Criar Conta"
+- contentinfo: Vagas na Rede — Todos os direitos reservados.
 - alert
-- link "Vagas na Rede":
-  - /url: /
-  - img "Vagas na Rede"
-- heading "Entrar" [level=1]
-- paragraph: Acesse sua conta no Vagas na Rede.
-- text: E-mail
-- textbox
-- text: Senha
-- textbox
-- button "Entrar"
-- link "Ainda não tem conta? Fale com a gente":
-  - /url: https://wa.me/undefined
-  - img
-  - text: Ainda não tem conta? Fale com a gente
 ```
 
 # Test source
