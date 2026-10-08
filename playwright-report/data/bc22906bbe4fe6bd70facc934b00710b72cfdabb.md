@@ -37,11 +37,11 @@ Call log:
   - text: Nome da Empresa
   - textbox: Empresa Teste E2E LTDA
   - text: E-mail
-  - textbox: rh-1791369107095-7450@teste-e2e.local
+  - textbox: rh-1791467701755-49256@teste-e2e.local
   - text: Senha
   - textbox: senhaTeste12345
   - text: CNPJ
-  - textbox "00.000.000/0000-00": 90.221.752/3412-40
+  - textbox "00.000.000/0000-00": 83.677.035/1648-90
   - text: Telefone / WhatsApp
   - textbox "(00) 00000-0000": (61) 99999-9999
   - text: Cidade Sede
