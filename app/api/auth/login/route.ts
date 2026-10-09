@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-import { obterIp, verificarLimite } from '@/lib/rate-limit';
+import { verificarLimite, obterIp, requisicaoEhDeTesteE2E } from '@/lib/rate-limit';
 
 const schema = z.object({
   email: z.string().email(),
@@ -12,6 +12,11 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const ip = obterIp(request);
+    if (!requisicaoEhDeTesteE2E(request) && !verificarLimite(`login:${ip}`, 5, 15 * 60 * 1000)) {
+      return NextResponse.json({ erro: "Muitas tentativas. Tente novamente em alguns minutos." }, { status: 429 });
+    }
+
     const body = await request.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) {
@@ -36,11 +41,6 @@ export async function POST(request: Request) {
         },
       }
     );
-
-    const ip = obterIp(request);
-    if (!verificarLimite(`login:${ip}`, 5, 15 * 60 * 1000)) {
-      return NextResponse.json({ erro: "Muitas tentativas. Tente novamente em alguns minutos." }, { status: 429 });
-    }
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: parsed.data.email,

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { hashDocumento, encryptDocumento } from "@/lib/crypto";
 import { validarCnpj, normalizarCnpj } from "@/lib/cnpj";
 import { validarCpf, normalizarCpf } from "@/lib/cpf";
+import { verificarLimite, obterIp, requisicaoEhDeTesteE2E } from "@/lib/rate-limit";
 
 const baseSchema = z.object({
   email: z.string().email(),
@@ -43,11 +44,15 @@ const signupSchema = z.discriminatedUnion("tipo", [
 ]);
 
 export async function POST(request: Request) {
+  const ip = obterIp(request);
+  if (!requisicaoEhDeTesteE2E(request) && !verificarLimite(`signup:${ip}`, 10, 60 * 60 * 1000)) {
+    return NextResponse.json({ erro: "Muitas tentativas de cadastro. Tente novamente mais tarde." }, { status: 429 });
+  }
+
   const body = await request.json();
   const parsed = signupSchema.safeParse(body);
 
   if (!parsed.success) {
-    // pega a primeira mensagem especifica (CPF invalido, CNPJ invalido, etc.) em vez de um erro generico
     const mensagem = parsed.error.issues[0]?.message ?? "Dados invalidos";
     return NextResponse.json({ erro: mensagem, detalhes: parsed.error.flatten() }, { status: 400 });
   }
