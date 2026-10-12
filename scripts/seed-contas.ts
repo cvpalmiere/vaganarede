@@ -1,13 +1,12 @@
 ﻿// USO EXCLUSIVO EM DEV - cria/atualiza as contas de teste (Admin, Empresa, Empresa RH) direto no banco,
-// com assinatura ja ATIVO, sem passar pelo checkout real do Stripe. Idempotente: pode rodar quantas vezes quiser.
+// ja aprovadas e com assinatura ATIVO, sem passar pelo fluxo manual de aprovacao do Admin nem pelo checkout real do Stripe.
+// Idempotente: pode rodar quantas vezes quiser.
 import { createClient } from "@supabase/supabase-js";
+import ws from "ws";
 import { prisma } from "../lib/prisma";
 import { hashDocumento, encryptDocumento } from "../lib/crypto";
 import { validarCnpj } from "../lib/cnpj";
-import ws from "ws";
 
-// client proprio do script - nao usa lib/supabase.ts porque ele importa "server-only",
-// que so funciona dentro do runtime do Next.js, nao rodando solto via tsx
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -63,7 +62,7 @@ async function seedEmpresa() {
 
   const empresa = await prisma.empresa.upsert({
     where: { usuarioId },
-    update: {},
+    update: { aprovado: true },
     create: {
       usuarioId,
       razaoSocial: "Empresa Teste LTDA",
@@ -71,6 +70,7 @@ async function seedEmpresa() {
       cnpjCriptografado: encryptDocumento(cnpj),
       telefone: "61999999999",
       cidade: "Brasilia",
+      aprovado: true,
     },
   });
 
@@ -100,12 +100,13 @@ async function seedEmpresaRh() {
 
   const empresaRh = await prisma.empresaRh.upsert({
     where: { usuarioId },
-    update: {},
+    update: { aprovado: true },
     create: {
       usuarioId,
       razaoSocial: "Agencia RH Teste LTDA",
       cnpjHash: hashDocumento(cnpj),
       cnpjCriptografado: encryptDocumento(cnpj),
+      aprovado: true,
     },
   });
 

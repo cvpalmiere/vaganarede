@@ -1,4 +1,5 @@
-﻿import Link from "next/link";
+﻿// cSpell:disable
+import Link from "next/link";
 import { ArrowUpRight, ArrowDown, UserCircle, Building2, Network, ShieldCheck, FileLock2, Lock } from "lucide-react";
 import { HeroPreview } from "@/components/landing/hero-preview";
 import { FeatureAccordion } from "@/components/landing/feature-accordion";
@@ -20,12 +21,6 @@ export const metadata = {
     description: "Matching inteligente entre candidatos e vagas.",
   },
 };
-
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-
-function whatsappLink(mensagem: string) {
-  return "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(mensagem);
-}
 
 export default function LandingPage() {
   return (
@@ -218,68 +213,83 @@ export default function LandingPage() {
         <section id="planos" className="bg-off-white py-20 lg:py-28">
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="text-center">
-              <p className="text-xs font-bold uppercase tracking-[.18em] text-yellow-700">Planos para empresas</p>
+              <p className="text-xs font-bold uppercase tracking-[.18em] text-yellow-700">Acesso à plataforma</p>
               <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-bold leading-tight tracking-[-.045em] text-deep-black sm:text-4xl">
                 Escolha a estrutura que acompanha a sua operação
               </h2>
             </div>
 
             <div className="mt-10 grid gap-5 lg:grid-cols-3">
+              {/* CARD CANDIDATO */}
               <article className="soft-card rounded-[1.7rem] bg-white p-7">
-                <p className="text-sm font-bold uppercase tracking-[.14em] text-zinc-500">Empresa</p>
-                <h3 className="mt-5 text-2xl font-bold tracking-[-.035em] text-deep-black">Standard</h3>
-                <p className="mt-4 text-3xl font-bold text-deep-black">
-                  R$ 299<span className="text-sm font-normal text-gray-500">/mês</span>
-                </p>
-                <p className="mt-4 min-h-14 leading-7 text-zinc-600">Até 10 vagas/mês e acesso ao banco de currículos.</p>
+                <p className="text-sm font-bold uppercase tracking-[.14em] text-zinc-500">Candidatos</p>
+                <h3 className="mt-5 text-2xl font-bold tracking-[-.035em] text-deep-black">Acesso Gratuito</h3>
+                <div className="mt-4 min-h-[220px] text-zinc-600">
+                  <p className="mb-4 leading-7">O que você pode fazer:</p>
+                  <ul className="flex flex-col gap-3 text-sm">
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Cadastro e login (E-mail e Senha)</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Criar perfil (Escolaridade, Curso, Contatos)</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Adicionar e avaliar suas Skills</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Upload de documentos</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Buscar e filtrar vagas</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Visualizar vagas recomendadas</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Excluir a própria conta e dados (LGPD)</li>
+                  </ul>
+                </div>
                 <Link
-                  href="/cadastro?tipo=EMPRESA"
+                  href="/cadastro?tipo=CANDIDATO"
                   className="mt-8 inline-flex w-full items-center justify-center rounded-pill border border-black px-5 py-3 font-bold text-deep-black transition hover:bg-black hover:text-white"
                 >
                   Começar agora
                 </Link>
               </article>
 
+              {/* CARD EMPRESA */}
               <article className="rounded-[1.7rem] bg-deep-black p-7 text-white shadow-xl">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-bold uppercase tracking-[.14em] text-yellow-200">Empresa de RH</p>
-                  <span className="rounded-pill bg-electric-yellow px-3 py-1 text-xs font-bold text-deep-black">EM DESTAQUE</span>
+                  <p className="text-sm font-bold uppercase tracking-[.14em] text-yellow-200">Empresas</p>
+                  <span className="rounded-pill bg-electric-yellow px-3 py-1 text-xs font-bold text-deep-black">EXCLUSIVO</span>
                 </div>
-                <h3 className="mt-5 text-2xl font-bold tracking-[-.035em]">Pro</h3>
-                <p className="mt-4 text-3xl font-bold">
-                  R$ 899<span className="text-sm font-normal text-gray-400">/mês</span>
-                </p>
-                <p className="mt-4 min-h-14 leading-7 text-zinc-300">Vagas ilimitadas, múltiplos clientes e API de integração.</p>
+                <h3 className="mt-5 text-2xl font-bold tracking-[-.035em]">Painel Corporativo</h3>
+                <div className="mt-4 min-h-[220px] text-zinc-300">
+                  <p className="mb-4 leading-7">O que você pode fazer:</p>
+                  <ul className="flex flex-col gap-3 text-sm">
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Cadastro via Validação de CNPJ</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Pagamento via Stripe</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Acesso mediante aprovação</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Publicar e detalhar Vagas</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Triagem de currículos e candidaturas</li>
+                  </ul>
+                </div>
                 <Link
-                  href="/cadastro?tipo=EMPRESA_RH"
+                  href="/cadastro?tipo=EMPRESA"
                   className="mt-8 inline-flex w-full items-center justify-center rounded-pill bg-electric-yellow px-5 py-3 font-bold text-deep-black transition hover:-translate-y-0.5"
                 >
                   Começar agora
                 </Link>
               </article>
 
+              {/* CARD AGÊNCIA DE RH */}
               <article className="soft-card rounded-[1.7rem] bg-[#e9e8e1] p-7">
-                <p className="text-sm font-bold uppercase tracking-[.14em] text-zinc-500">Sua realidade primeiro</p>
-                <h3 className="mt-5 text-2xl font-bold tracking-[-.035em] text-deep-black">Sob medida</h3>
-                <p className="mt-4 min-h-14 leading-7 text-zinc-600">
-                  Uma conversa para encontrar o formato ideal para a sua operação.
-                </p>
+                <p className="text-sm font-bold uppercase tracking-[.14em] text-zinc-500">Agências de RH</p>
+                <h3 className="mt-5 text-2xl font-bold tracking-[-.035em] text-deep-black">Painel Master</h3>
+                <div className="mt-4 min-h-[220px] text-zinc-600">
+                  <p className="mb-4 leading-7">O que você pode fazer:</p>
+                  <ul className="flex flex-col gap-3 text-sm">
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Todos os recursos de Empresas</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Cadastrar Empresas-Cliente</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Publicar vagas para clientes específicos</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Painel unificado de métricas</li>
+                    <li className="flex items-center gap-2"><span className="text-electric-yellow font-bold">✓</span> Gerir múltiplos processos simultâneos</li>
+                  </ul>
+                </div>
                 <Link
-                  href={whatsappLink("Quero falar sobre um plano sob medida")}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/cadastro?tipo=EMPRESA_RH"
                   className="mt-8 inline-flex w-full items-center justify-center rounded-pill border border-black px-5 py-3 font-bold text-deep-black transition hover:bg-black hover:text-white"
                 >
-                  Falar com a gente
+                  Começar agora
                 </Link>
               </article>
-            </div>
-
-            <div className="mt-7 flex flex-col items-center justify-between gap-4 rounded-2xl border border-black/10 bg-white px-5 py-4 text-center sm:flex-row sm:text-left">
-              <p className="text-sm text-zinc-600">Pagamento processado com segurança via Stripe.</p>
-              <p className="rounded-pill bg-yellow-100 px-4 py-2 text-sm font-bold text-deep-black">
-                Pagou, ativou — sem espera manual.
-              </p>
             </div>
           </div>
         </section>
@@ -319,6 +329,8 @@ export default function LandingPage() {
               <Link href="#agencias" className="text-zinc-300 hover:text-yellow-200">Agências de RH</Link>
               <Link href="/login" className="text-zinc-300 hover:text-yellow-200">Entrar</Link>
               <Link href="/cadastro" className="text-yellow-200 hover:text-white">Começar agora</Link>
+              <Link href="/termos" className="text-zinc-300 hover:text-yellow-200">Termos de uso</Link>
+              <Link href="/privacidade" className="text-zinc-300 hover:text-yellow-200">Privacidade</Link>
             </div>
           </div>
           <div className="pt-6">
@@ -331,4 +343,3 @@ export default function LandingPage() {
     </div>
   );
 }
-

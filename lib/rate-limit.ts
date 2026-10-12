@@ -25,8 +25,6 @@ export function obterIp(request: Request): string {
   return forwarded ? forwarded.split(",")[0].trim() : "desconhecido";
 }
 
-// bypass EXCLUSIVO para testes automatizados - so funciona se a env E2E_BYPASS_KEY existir no servidor
-// E o header bater com ela. Em producao essa env nunca e definida, entao o bypass fica permanentemente desligado la.
 export function requisicaoEhDeTesteE2E(request: Request): boolean {
   const chaveServidor = process.env.E2E_BYPASS_KEY;
   if (!chaveServidor) return false;

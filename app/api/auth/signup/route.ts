@@ -122,6 +122,11 @@ export async function POST(request: Request) {
         },
       });
     });
+
+    await prisma.usuario.update({
+      where: { id: authUser.user.id },
+      data: { consentimentoLgpdEm: new Date() },
+    });
   } catch (dbError) {
     await supabaseAdmin.auth.admin.deleteUser(authUser.user.id);
 

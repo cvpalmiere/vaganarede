@@ -47,18 +47,33 @@ export function CadastroForm() {
         throw new Error(errData.erro || "Erro ao criar conta");
       }
 
-      const resLogin = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: dados.email, senha: dados.senha }),
-      });
+      // login automatico com retry - se o Supabase estiver limitando por rajada de requisicoes,
+      // espera um pouco e tenta mais uma vez antes de desistir e mandar pro login manual
+      async function tentarLogin(tentativa: number): Promise<Response> {
+        const resposta = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: dados.email, senha: dados.senha }),
+        });
+
+        if (resposta.status === 429 && tentativa < 3) {
+          await new Promise((r) => setTimeout(r, 2000 * tentativa));
+          return tentarLogin(tentativa + 1);
+        }
+
+        return resposta;
+      }
+
+      const resLogin = await tentarLogin(1);
 
       if (!resLogin.ok) {
         router.push("/login");
         return;
       }
 
-      router.push(ROTA_APOS_CADASTRO[tipo]);
+      const dadosLogin: { tipo?: TipoUsuario } = await resLogin.json();
+      const tipoConfirmado = dadosLogin.tipo ?? tipo;
+      router.push(ROTA_APOS_CADASTRO[tipoConfirmado]);
     } catch (error) {
       setErro(error instanceof Error ? error.message : "Erro ao criar conta");
       setLoading(false);
