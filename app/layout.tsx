@@ -1,6 +1,7 @@
 ﻿import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { RegisterServiceWorker } from "@/components/register-sw";
+import { CookieBanner } from "@/components/cookie-banner";
 
 // 1. Configurações de Viewport separadas (padrão Next.js recente)
 export const viewport: Viewport = {
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <RegisterServiceWorker />
+        <CookieBanner />
       </body>
     </html>
   );
