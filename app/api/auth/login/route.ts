@@ -20,6 +20,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ erro: "Dados invalidos" }, { status: 400 });
   }
 
+  const { email, senha } = parsed.data;
+
+  // 1. Verificação opcional baseada estritamente em Variáveis de Ambiente para o Admin
+  const adminEnvEmail = process.env.ADMIN_EMAIL || process.env.SEED_ADMIN_EMAIL;
+  const adminEnvSenha = process.env.ADMIN_SENHA || process.env.SEED_ADMIN_SENHA;
+
+  if (adminEnvEmail && adminEnvSenha && email === adminEnvEmail && senha === adminEnvSenha) {
+    return NextResponse.json({ ok: true, tipo: "ADMIN" });
+  }
+
+  // 2. Fluxo normal via Supabase Auth para os demais usuários
   const cookieStore = await cookies();
   const response = NextResponse.json({ ok: true });
 
@@ -37,8 +48,8 @@ export async function POST(request: Request) {
   );
 
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: parsed.data.email,
-    password: parsed.data.senha,
+    email,
+    password: senha,
   });
 
   if (error || !data.user) {
