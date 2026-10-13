@@ -1,13 +1,30 @@
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 export async function GET() {
-  const usuario = await getSessionUser();
-  if (!usuario || usuario.tipo !== "ADMIN") {
+  // 1. Leitura assíncrona de cookies obrigatória no Next.js 15
+  const cookieStore = await cookies();
+  
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => cookieStore.getAll(),
+      },
+    }
+  );
+
+  // 2. Validação direta e segura da sessão
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user || user.app_metadata?.tipo_usuario !== "ADMIN") {
     return NextResponse.json({ erro: "Nao autorizado" }, { status: 401 });
   }
 
+  // 3. Execução das queries Prisma (Inalterado)
   const seteDiasAtras = new Date();
   seteDiasAtras.setDate(seteDiasAtras.getDate() - 7);
 
