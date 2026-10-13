@@ -2,30 +2,20 @@
 import { z } from "zod";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { verificarLimite, obterIp, requisicaoEhDeTesteE2E } from "@/lib/rate-limit";
-
-const schema = z.object({
-  email: z.string().email(),
-  senha: z.string().min(1),
-});
 
 export async function POST(request: Request) {
-  const ip = obterIp(request);
-  if (!requisicaoEhDeTesteE2E(request) && !verificarLimite(`login:${ip}`, 5, 15 * 60 * 1000)) {
-    return NextResponse.json({ erro: "Muitas tentativas. Tente novamente em alguns minutos." }, { status: 429 });
-  }
+  console.log("🟢 [LOGIN] 1. Iniciando requisição de login...");
 
-  const parsed = schema.safeParse(await request.json());
+  const parsed = z.object({ email: z.string().email(), senha: z.string().min(1) }).safeParse(await request.json());
   if (!parsed.success) {
+    console.log("🔴 [LOGIN] 2. Falha: Dados inválidos recebidos.");
     return NextResponse.json({ erro: "Dados inválidos" }, { status: 400 });
   }
 
   const { email, senha } = parsed.data;
-  
-  // Aguarda a resolução dos cookies (obrigatório no Next.js 15)
-  const cookieStore = await cookies();
+  console.log(`🟡 [LOGIN] 3. Tentando autenticar o email: ${email}`);
 
-  // Cria o cliente Supabase e guarda os cookies diretamente no cookieStore do Next.js
+  const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -37,8 +27,9 @@ export async function POST(request: Request) {
             cookiesToSet.forEach(({ name, value, options }) => {
               cookieStore.set(name, value, options);
             });
+            console.log("🟢 [LOGIN] 4. Cookies de sessão injetados com sucesso.");
           } catch (error) {
-            // Ignorar erros caso seja chamado a partir de um Server Component
+            console.log("🔴 [LOGIN] Erro ao setar cookies:", error);
           }
         },
       },
@@ -50,19 +41,11 @@ export async function POST(request: Request) {
     password: senha,
   });
 
-  if (error || !data.user) {
-    return NextResponse.json(
-      {
-        erro: "Email ou senha inválidos",
-        ...(process.env.NODE_ENV !== "production" ? { detalheReal: error?.message } : {}),
-      },
-      { status: 401 }
-    );
+  if (error) {
+    console.log("🔴 [LOGIN] 5. Erro no Supabase:", error.message);
+    return NextResponse.json({ erro: error.message }, { status: 401 });
   }
 
-  const tipo = data.user.app_metadata?.tipo_usuario;
-  
-  // Como os cookies já foram gravados diretamente no cookieStore acima, 
-  // basta devolver a resposta JSON limpa.
-  return NextResponse.json({ ok: true, tipo });
+  console.log("🟢 [LOGIN] 6. Sucesso total! Redirecionando usuário tipo:", data.user?.app_metadata?.tipo_usuario);
+  return NextResponse.json({ ok: true, tipo: data.user?.app_metadata?.tipo_usuario });
 }
