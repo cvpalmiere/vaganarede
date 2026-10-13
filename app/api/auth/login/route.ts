@@ -17,14 +17,15 @@ export async function POST(request: Request) {
 
   const parsed = schema.safeParse(await request.json());
   if (!parsed.success) {
-    return NextResponse.json({ erro: "Dados invalidos" }, { status: 400 });
+    return NextResponse.json({ erro: "Dados inválidos" }, { status: 400 });
   }
 
   const { email, senha } = parsed.data;
+  
+  // Aguarda a resolução dos cookies (obrigatório no Next.js 15)
   const cookieStore = await cookies();
-  const response = NextResponse.json({ ok: true });
 
-  // Fluxo nativo e seguro via Supabase (que cria os cookies automaticamente)
+  // Cria o cliente Supabase e guarda os cookies diretamente no cookieStore do Next.js
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -32,7 +33,13 @@ export async function POST(request: Request) {
       cookies: {
         getAll: () => cookieStore.getAll(),
         setAll: (cookiesToSet: { name: string; value: string; options: CookieOptions }[]) => {
-          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch (error) {
+            // Ignorar erros caso seja chamado a partir de um Server Component
+          }
         },
       },
     }
@@ -46,7 +53,7 @@ export async function POST(request: Request) {
   if (error || !data.user) {
     return NextResponse.json(
       {
-        erro: "Email ou senha invalidos",
+        erro: "Email ou senha inválidos",
         ...(process.env.NODE_ENV !== "production" ? { detalheReal: error?.message } : {}),
       },
       { status: 401 }
@@ -54,5 +61,8 @@ export async function POST(request: Request) {
   }
 
   const tipo = data.user.app_metadata?.tipo_usuario;
-  return NextResponse.json({ ok: true, tipo }, { headers: response.headers });
+  
+  // Como os cookies já foram gravados diretamente no cookieStore acima, 
+  // basta devolver a resposta JSON limpa.
+  return NextResponse.json({ ok: true, tipo });
 }
