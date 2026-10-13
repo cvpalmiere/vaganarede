@@ -4,18 +4,17 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
-  console.log("🟢 [LOGIN] 1. Iniciando requisição de login...");
-
   const parsed = z.object({ email: z.string().email(), senha: z.string().min(1) }).safeParse(await request.json());
   if (!parsed.success) {
-    console.log("🔴 [LOGIN] 2. Falha: Dados inválidos recebidos.");
     return NextResponse.json({ erro: "Dados inválidos" }, { status: 400 });
   }
 
   const { email, senha } = parsed.data;
-  console.log(`🟡 [LOGIN] 3. Tentando autenticar o email: ${email}`);
-
   const cookieStore = await cookies();
+  
+  // 1. Criamos uma resposta temporária que servirá como um "cofre" inquebrável para os cookies
+  const tempResponse = NextResponse.json({ ok: true });
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -23,29 +22,27 @@ export async function POST(request: Request) {
       cookies: {
         getAll: () => cookieStore.getAll(),
         setAll: (cookiesToSet: { name: string; value: string; options: CookieOptions }[]) => {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-            console.log("🟢 [LOGIN] 4. Cookies de sessão injetados com sucesso.");
-          } catch (error) {
-            console.log("🔴 [LOGIN] Erro ao setar cookies:", error);
-          }
+          cookiesToSet.forEach(({ name, value, options }) => {
+            // Tenta gravar no servidor
+            try { cookieStore.set(name, value, options); } catch (e) {}
+            
+            // FORÇA a criação do cabeçalho Set-Cookie no nosso "cofre" (Isto garante que vai para o navegador)
+            tempResponse.cookies.set({ name, value, ...options });
+          });
         },
       },
     }
   );
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password: senha,
-  });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
 
   if (error) {
-    console.log("🔴 [LOGIN] 5. Erro no Supabase:", error.message);
     return NextResponse.json({ erro: error.message }, { status: 401 });
   }
 
-  console.log("🟢 [LOGIN] 6. Sucesso total! Redirecionando usuário tipo:", data.user?.app_metadata?.tipo_usuario);
-  return NextResponse.json({ ok: true, tipo: data.user?.app_metadata?.tipo_usuario });
+  // 2. Retornamos a resposta de sucesso injetando os cabeçalhos que guardamos!
+  return NextResponse.json(
+    { ok: true, tipo: data.user?.app_metadata?.tipo_usuario },
+    { headers: tempResponse.headers } 
+  );
 }
