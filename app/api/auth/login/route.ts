@@ -21,19 +21,10 @@ export async function POST(request: Request) {
   }
 
   const { email, senha } = parsed.data;
-
-  // 1. Verificação opcional baseada estritamente em Variáveis de Ambiente para o Admin
-  const adminEnvEmail = process.env.ADMIN_EMAIL || process.env.SEED_ADMIN_EMAIL;
-  const adminEnvSenha = process.env.ADMIN_SENHA || process.env.SEED_ADMIN_SENHA;
-
-  if (adminEnvEmail && adminEnvSenha && email === adminEnvEmail && senha === adminEnvSenha) {
-    return NextResponse.json({ ok: true, tipo: "ADMIN" });
-  }
-
-  // 2. Fluxo normal via Supabase Auth para os demais usuários
   const cookieStore = await cookies();
   const response = NextResponse.json({ ok: true });
 
+  // Fluxo nativo e seguro via Supabase (que cria os cookies automaticamente)
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
