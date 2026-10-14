@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react"; // Adicionado ícone de exclusão
 
 type Usuario = { id: string; email: string; tipo: string; criadoEm: string };
 
@@ -24,6 +25,28 @@ export default function UsuariosAdmin() {
       });
   }, []);
 
+  // NOVA FUNÇÃO: Aciona a API de exclusão e remove da tela
+  const excluirUsuario = async (id: string) => {
+    if (!confirm("Tem a certeza que deseja excluir este usuário definitivamente?")) return;
+
+    // Remove da interface imediatamente (Optimistic UI)
+    setUsuarios((prev) => prev.filter((u) => u.id !== id));
+
+    try {
+      const response = await fetch("/api/admin/usuarios", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!response.ok) {
+        alert("Erro ao excluir do banco de dados.");
+      }
+    } catch {
+      alert("Erro de comunicação com o servidor.");
+    }
+  };
+
   if (carregando) return <p className="text-gray-500">Carregando...</p>;
 
   return (
@@ -41,11 +64,12 @@ export default function UsuariosAdmin() {
                 <th className="p-4">E-mail</th>
                 <th className="p-4">Tipo</th>
                 <th className="p-4">Cadastro</th>
+                <th className="p-4 text-right">Ação</th> {/* Coluna Nova */}
               </tr>
             </thead>
             <tbody>
               {usuarios.map((u) => (
-                <tr key={u.id} className="border-b border-gray-100 last:border-0">
+                <tr key={u.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors">
                   <td className="p-4 text-deep-black">{u.email}</td>
                   <td className="p-4">
                     <span className={"text-xs font-bold px-2.5 py-1 rounded-pill " + (TIPO_COR[u.tipo] || "bg-gray-100")}>
@@ -53,6 +77,16 @@ export default function UsuariosAdmin() {
                     </span>
                   </td>
                   <td className="p-4 text-gray-500">{new Date(u.criadoEm).toLocaleDateString("pt-BR")}</td>
+                  <td className="p-4 flex justify-end">
+                    {/* Botão de Excluir Novo */}
+                    <button
+                      onClick={() => excluirUsuario(u.id)}
+                      title="Excluir Usuário"
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
