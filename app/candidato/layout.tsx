@@ -9,7 +9,10 @@ export default async function CandidatoLayout({ children }: { children: React.Re
   return (
     <div className="min-h-screen bg-off-white">
       <CandidatoNav />
-      <main className="max-w-3xl mx-auto px-6 py-10">{children}</main>
+      {/* max-w-7xl garante que a tela é preenchida corretamente em monitores grandes */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {children}
+      </main>
     </div>
   );
 }
