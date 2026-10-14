@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Users, Building2, Briefcase, FileText, DollarSign, AlertTriangle } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { AdminGestaoAcessos } from "@/components/admin-gestao-acessos";
 
 type Metricas = {
   totalCandidatos: number;
@@ -92,13 +93,14 @@ export default function PainelAdmin() {
         </div>
       </div>
 
-      <div className="glass rounded-card p-6 border border-white">
-        <h2 className="font-bold text-deep-black mb-1 flex items-center gap-2">
-          <FileText className="w-4 h-4" />
-          Candidaturas no sistema
-        </h2>
-        <p className="text-3xl font-bold text-deep-black mt-2">{dados.totalCandidaturas}</p>
+        <div className="glass rounded-card p-6 border border-white">
+          <h2 className="font-bold text-deep-black mb-1 flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            Candidaturas no sistema
+          </h2>
+          <p className="text-3xl font-bold text-deep-black mt-2">{dados.totalCandidaturas}</p>
+        </div>
+        <AdminGestaoAcessos />
       </div>
-    </div>
-  );
+    );
 }
